@@ -61,6 +61,8 @@ PARAMS="${TIM_ALSASEQPARAMS} -iAD"
 
 START="--start --chuid ${SERVER_USER} --quiet --exec ${DAEMON} --pidfile ${PIDFILE} -- ${PARAMS}"
 
+set +e
+
 case "$1" in
   start)
 	#log_daemon_msg "Starting" "${NAME}"
@@ -69,7 +71,7 @@ case "$1" in
 		log_warning_msg "ALSA is not active, cannot start $DESC"
 		exit 0
 	}
-	log_begin_msg "Starting $DESC..."
+	log_daemon_msg "Starting $DESC" "$NAME"
     mkdir -p /var/run/timidity
     chown timidity /var/run/timidity
 	if start-stop-daemon ${START} < /dev/null >/dev/null 2>&1; then
@@ -80,8 +82,8 @@ case "$1" in
 	fi
 	;;
   stop)
-	log_begin_msg "Stopping $DESC..."
-	if start-stop-daemon --stop --oknodo --pidfile ${PIDFILE} \
+	log_daemon_msg "Stopping $DESC" "$NAME"
+	if start-stop-daemon --quiet --stop --oknodo --pidfile ${PIDFILE} \
           --name ${NAME} --retry 10 ; then
 		log_end_msg 0
 	else
