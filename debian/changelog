@@ -1,9 +1,14 @@
-timidity (2.13.2-40.6) unstable; urgency=medium
+timidity (2.13.2-41) unstable; urgency=medium
 
-  * Non-maintainer upload.
+  * QA upload.
+    Only minimal changes, untangling the quiltage was too much for my
+    fragile little mind.
+  * Set maintainer to the QA team.
   * Drop esound support.  Closes: #856095
+  * Vcs fields for Salsa.
+  * R³.
 
- -- Adam Borowski <kilobyte@angband.pl>  Mon, 25 Dec 2017 22:26:09 +0100
+ -- Adam Borowski <kilobyte@angband.pl>  Fri, 05 Jan 2018 21:12:17 +0100
 
 timidity (2.13.2-40.5) unstable; urgency=medium
 
