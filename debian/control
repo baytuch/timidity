@@ -28,6 +28,8 @@ Build-Depends:
 Standards-Version: 3.9.2
 Homepage: http://timidity.sourceforge.net/
 Rules-Requires-Root: no
+Vcs-Git: https://salsa.debian.org/debian/timidity.git
+Vcs-Browser: https://salsa.debian.org/debian/timidity
 
 Package: timidity
 Architecture: any
