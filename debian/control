@@ -27,6 +27,7 @@ Build-Depends:
  tk-dev,
 Standards-Version: 3.9.2
 Homepage: http://timidity.sourceforge.net/
+Rules-Requires-Root: no
 
 Package: timidity
 Architecture: any
