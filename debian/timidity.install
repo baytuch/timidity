@@ -1,0 +1,7 @@
+etc/X11
+etc/default
+etc/timidity/timidity.cfg
+usr/bin
+usr/lib/timidity/bitmaps
+usr/share/man
+usr/share/pixmaps
