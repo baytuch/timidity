@@ -1,0 +1,27 @@
+Author: Sergei Golovan <sgolovan@nes.ru>
+Description: Compatibility with TK8.6
+ interp->result has been deprecated for a while and is no
+ longer available in TK8.6.
+ The return value can be removed as it is never evaluated
+ anyway.
+Bug-Debian: https://bugs.debian.org/728089
+
+--- a/interface/tk_c.c
++++ b/interface/tk_c.c
+@@ -905,7 +905,7 @@
+ }
+ 
+ /* evaluate Tcl script */
+-static char *v_eval(char *fmt, ...)
++void v_eval(char *fmt, ...)
+ {
+ 	char buf[256];
+ 	va_list ap;
+@@ -913,7 +913,6 @@
+ 	vsnprintf(buf, sizeof(buf), fmt, ap);
+ 	Tcl_Eval(my_interp, buf);
+ 	va_end(ap);
+-	return my_interp->result;
+ }
+ 
+ static const char *v_get2(const char *v1, const char *v2)
