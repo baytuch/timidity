@@ -324,7 +324,7 @@ static int pasv_open(int *port)
     }
     if(*port == 0)
     {
-	socklen_t len = sizeof(server);
+	int len = sizeof(server);
 	if(getsockname(sfd, (struct sockaddr *)&server, &len) < 0)
 	{
 	    perror("getsockname");
@@ -358,7 +358,7 @@ static void server_reset(void);
 
 static void ctl_pass_playing_list(int n, char *args[])
 {
-    int sock = 0;
+    int sock;
 
     if(n != 2 && n != 1)
     {
@@ -390,7 +390,7 @@ static void ctl_pass_playing_list(int n, char *args[])
     play_mode->close_output();
     while(1)
     {
-	socklen_t addrlen;
+	int addrlen;
 
 	addrlen = sizeof(control_client);
 	memset(&control_client, 0, addrlen);
@@ -553,7 +553,6 @@ static void add_tick(int tick)
     seq_play_event(&ev);
 }
 
-#if 0
 static int tick2sample(int tick)
 {
     int32 samples, cum;
@@ -564,7 +563,6 @@ static int tick2sample(int tick)
 	samples += ((sample_cum >> 16) & 0xFFFF);
     return samples;
 }
-#endif
 
 int time2tick(double sec)
 {
@@ -594,7 +592,7 @@ static void do_timing(uint8 *);
 static void do_sysex(uint8 *, int len);
 static void do_extended(uint8 *);
 static void do_timeout(void);
-//static void server_seq_sync(double tm);
+static void server_seq_sync(double tm);
 
 static uint8 data_buffer[BUFSIZ];
 static int data_buffer_len;
@@ -771,7 +769,6 @@ static int data_flush(int discard)
     return 0;
 }
 
-#if 0
 static void server_seq_sync(double tm)
 {
     double t;
@@ -780,7 +777,6 @@ static void server_seq_sync(double tm)
     if(t > tm)
 	usleep((unsigned long)((t - tm) * 1000000));
 }
-#endif
 
 static void server_reset(void)
 {
@@ -852,7 +848,7 @@ static int cmd_open(int argc, char **argv)
 {
     int sock;
     struct sockaddr_in in;
-    socklen_t addrlen;
+    int addrlen;
     int port;
 
     if(data_fd != -1)

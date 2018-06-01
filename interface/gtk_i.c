@@ -56,7 +56,7 @@
 #include "pixmaps/timidity.xpm"
 
 static GtkWidget *create_menubar(void);
-static GtkWidget *create_button_with_pixmap(GtkWidget *, gchar **, glong, gchar *);
+static GtkWidget *create_button_with_pixmap(GtkWidget *, gchar **, gint, gchar *);
 static GtkWidget *create_pixmap_label(GtkWidget *, gchar **);
 static gint delete_event(GtkWidget *, GdkEvent *, gpointer);
 static void destroy (GtkWidget *, gpointer);
@@ -65,7 +65,7 @@ static void handle_input(gpointer, gint, GdkInputCondition);
 static void generic_cb(GtkWidget *, gpointer);
 static void generic_scale_cb(GtkAdjustment *, gpointer);
 static void open_file_cb(GtkWidget *, gpointer);
-static void playlist_cb(GtkWidget *, gulong);
+static void playlist_cb(GtkWidget *, guint);
 static void playlist_op(GtkWidget *, guint);
 static void file_list_cb(GtkWidget *, gint, gint, GdkEventButton *, gpointer);
 static void clear_all_cb(GtkWidget *, gpointer);
@@ -107,8 +107,8 @@ static GtkTextMark *mark;
 static void
 generic_cb(GtkWidget *widget, gpointer data)
 {
-    gtk_pipe_int_write((long)data);
-    if((long)data == GTK_PAUSE) {
+    gtk_pipe_int_write((int)data);
+    if((int)data == GTK_PAUSE) {
 	gtk_label_set(GTK_LABEL(cnt_lbl), "Pause");
     }
 }
@@ -167,7 +167,7 @@ filer_cb(GtkWidget *widget, gpointer data)
 #endif
     glob_t pglob;
 
-    if((long)data == 1) {
+    if((int)data == 1) {
 	patt = gtk_file_selection_get_filename(GTK_FILE_SELECTION(filesel));
 	if(glob(patt, GLOB_BRACE|GLOB_NOMAGIC|GLOB_TILDE, NULL, &pglob))
 	    return;
@@ -195,11 +195,11 @@ generic_scale_cb(GtkAdjustment *adj, gpointer data)
     if(local_adjust)
 	return;
 
-    gtk_pipe_int_write((long)data);
+    gtk_pipe_int_write((int)data);
 
     /* This is a bit of a hack as the volume scale (a GtkVScale) seems
        to have it's minimum at the top which is counter-intuitive. */
-    if((long)data == GTK_CHANGE_VOLUME) {
+    if((int)data == GTK_CHANGE_VOLUME) {
 	gtk_pipe_int_write(MAX_AMPLIFICATION - adj->value);
     }
     else {
@@ -231,7 +231,7 @@ file_list_cb(GtkWidget *widget, gint row, gint column,
 }
 
 static void
-playlist_cb(GtkWidget *widget, gulong data)
+playlist_cb(GtkWidget *widget, guint data)
 {
     const gchar	*pldir;
     gchar	*plpatt;
@@ -277,8 +277,8 @@ playlist_op(GtkWidget *widget, guint data)
     if(!data)
 	return;
 
-    action = (gchar)(long)gtk_object_get_user_data(GTK_OBJECT(plfilesel));
-    filename[0] = (gchar*)gtk_file_selection_get_filename(GTK_FILE_SELECTION(plfilesel));
+    action = (gchar)(int)gtk_object_get_user_data(GTK_OBJECT(plfilesel));
+    filename[0] = gtk_file_selection_get_filename(GTK_FILE_SELECTION(plfilesel));
 
     if(action == 'l') {
 	if((plfp = fopen(filename[0], "r")) == NULL) {
@@ -580,7 +580,7 @@ Launch_Gtk_Process(int pipe_number)
 }
 
 static GtkWidget *
-create_button_with_pixmap(GtkWidget *window, gchar **bits, glong data, gchar *thelp)
+create_button_with_pixmap(GtkWidget *window, gchar **bits, gint data, gchar *thelp)
 {
     GtkWidget	*pw, *button;
     GdkPixmap	*pixmap;

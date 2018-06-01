@@ -204,7 +204,7 @@ static void drawProg(int,int,int,int,Boolean),drawPan(int,int,Boolean),
   optionsCB(),optionspopupCB(),optionscloseCB(),chorusCB(),optionsdestroyCB(),
   flistpopupCB(),flistcloseCB(),
   forwardCB(),backCB(),repeatCB(),randomCB(),menuCB(),sndspecCB(),
-  volsetCB(),volupdownCB(),filemenuCB(),
+  volsetCB(),volupdownCB(),tuneslideCB(),filemenuCB(),
   fselectCB(),fdeleteCB(),fdelallCB(),backspaceCB(),aboutCB(),aboutcloseCB(),
 #ifndef WIDGET_IS_LABEL_WIDGET
   deleteTextCB(),
@@ -216,7 +216,7 @@ static void drawProg(int,int,int,int,Boolean),drawPan(int,int,Boolean),
   drawKeyboardAll(),draw1Note(),redrawAction(),redrawCaption(),
   exchgWidth(),toggletrace(),
   checkRightAndPopupSubmenu(),popdownSubmenuCB(),popdownSubmenu(),leaveSubmenu(),
-  addOneFile(int,long,char *,Boolean),
+  addOneFile(int,int,char *,Boolean),
   flistMove(),closeParent(),createOptions(),createFlist();
 static char *expandDir(),*strmatch();
 static int configcmp();
@@ -261,8 +261,8 @@ int amplitude = DEFAULT_AMPLIFICATION;
 String bitmapdir = XAW_BITMAP_DIR;
 Boolean arrangetitle,savelist;
 static char **current_flist = NULL;
-static int last_voice = 0, voices_num_width;
-static long maxentry_on_a_menu = 0,submenu_n = 0;
+static int voices = 0, last_voice = 0, voices_num_width;
+static int maxentry_on_a_menu = 0,submenu_n = 0;
 #define OPTIONS_WINDOW 1
 #define FLIST_WINDOW 2
 #define ABOUT_WINDOW 4
@@ -371,8 +371,8 @@ static Display *disp;
 static int screen;
 static Pixmap check_mark, arrow_mark, on_mark, off_mark, layer[2];
 
-static unsigned int bm_width[MAXBITMAP], bm_height[MAXBITMAP];
-static int x_hot,y_hot, root_height, root_width;
+static int bm_height[MAXBITMAP], bm_width[MAXBITMAP],
+  x_hot,y_hot, root_height, root_width;
 static Pixmap bm_Pixmap[MAXBITMAP];
 static int max_files, init_options = 0, init_chorus = 0;
 static char basepath[PATH_MAX];
@@ -881,7 +881,7 @@ static void randomCB(Widget w,XtPointer data,XtPointer dummy) {
 
 static void menuCB(Widget w,XtPointer data,XtPointer dummy) {
   onPlayOffPause();
-  sprintf(local_buf,"L %ld",((long)data)+1);
+  sprintf(local_buf,"L %d",((int)data)+1);
   a_pipe_write(local_buf);
 }
 
@@ -914,7 +914,7 @@ static void volsetCB(Widget w,XtPointer data,XtPointer call_data) {
 }
 
 static void volupdownCB(Widget w,XtPointer data,XtPointer diff) {
-  int i = ((long)diff > 0)? (-10):10;
+  int i = ((int)diff > 0)? (-10):10;
 
   i += amplitude;
   setVolbar(i);
@@ -964,14 +964,12 @@ static void tunesetAction(Widget w,XEvent *e,String *v,Cardinal *n) {
   a_pipe_write(s);
 }
 
-#if 0
 static void tuneslideCB(Widget w,XtPointer data,XtPointer diff) {
   char s[16];
 
-  sprintf(s, "T %ld\n", curr_time+ (long)diff);
+  sprintf(s, "T %d\n", curr_time+ (int)diff);
   a_pipe_write(s);
 }
-#endif
 
 static void tuneslideAction(Widget w,XEvent *e,String *v,Cardinal *n) {
   char s[16];
@@ -2328,7 +2326,7 @@ static void a_readconfig (Config *Cfg) {
           if (c == LF || c == EOF || i > SSIZE) break;
           *p++ = c;
         }
-        *p = (char)0;
+        *p = (char)NULL;
         if (0 != strncasecmp(s, "set ", 4)) continue;
         switch (configcmp(s+4, &k)) {
         case S_RepeatPlay:
@@ -2491,7 +2489,7 @@ static void checkRightAndPopupSubmenu(Widget w, XEvent *e, String *v, Cardinal *
 
 /*ARGSUSED*/
 static void popdownSubmenuCB(Widget w,XtPointer data,XtPointer dummy) {
-  long i = (long)data;
+  int i = (int)data;
 
   if (i < 0) i = submenu_n -1;
   while(i >= 0) XtPopdown(psmenu[i--]);
@@ -2542,7 +2540,7 @@ static void addFlist(char *fname, int current_n) {
   flist[current_n+1]= NULL;
 }
 
-static void addOneFile(int max_files,long curr_num,char *fname,Boolean update_flist) {
+static void addOneFile(int max_files,int curr_num,char *fname,Boolean update_flist) {
   static Dimension tmpi;
   static int menu_height;
   static Widget tmpw;
@@ -2562,24 +2560,24 @@ static void addOneFile(int max_files,long curr_num,char *fname,Boolean update_fl
         psmenu = (Widget *)safe_malloc(sizeof(Widget) * ((int)(max_files / curr_num)+ 2));
       else
         psmenu = (Widget *)safe_realloc((char *)psmenu, sizeof(Widget)*(submenu_n + 2));
-      sprintf(sbuf, "morebox%ld", submenu_n);
+      sprintf(sbuf, "morebox%d", submenu_n);
       pbox=XtVaCreateManagedWidget(sbuf,smeBSBObjectClass,tmpw,XtNlabel,"  More...",
                                    XtNbackground,textbgcolor,XtNforeground,capcolor,
                                    XtNrightBitmap,arrow_mark,
                                    XtNfont,app_resources.label_font, NULL);
       snprintf(sbuf,sizeof(sbuf),
-              "<LeaveWindow>: unhighlight() checkRightAndPopupSubmenu(%ld)",submenu_n);
+              "<LeaveWindow>: unhighlight() checkRightAndPopupSubmenu(%d)",submenu_n);
       XtOverrideTranslations(tmpw, XtParseTranslationTable(sbuf));
 
-      sprintf(sbuf, "psmenu%ld", submenu_n);
+      sprintf(sbuf, "psmenu%d", submenu_n);
       psmenu[submenu_n] = XtVaCreatePopupShell(sbuf,simpleMenuWidgetClass,title_sm,
                                    XtNforeground,textcolor, XtNbackground,textbgcolor,
                                    XtNbackingStore,NotUseful,XtNsaveUnder,False,
                                    XtNwidth,menu_width,
                                    NULL);
-      snprintf(sbuf,sizeof(sbuf), "<BtnUp>: popdownSubmenu(%ld) notify() unhighlight()\n\
+      snprintf(sbuf,sizeof(sbuf), "<BtnUp>: popdownSubmenu(%d) notify() unhighlight()\n\
         <EnterWindow>: unhighlight()\n\
-        <LeaveWindow>: leaveSubmenu(%ld) unhighlight()",submenu_n,submenu_n);
+        <LeaveWindow>: leaveSubmenu(%d) unhighlight()",submenu_n,submenu_n);
       XtOverrideTranslations(psmenu[submenu_n],XtParseTranslationTable(sbuf));
       tmpw = psmenu[submenu_n++]; psmenu[submenu_n] = NULL;
       j = 0;
@@ -3236,7 +3234,7 @@ void a_start_interface(int pipe_in) {
   XtAppContext app_con;
   char cbuf[PATH_MAX];
   Pixmap bmPixmap;
-  unsigned int bmwidth, bmheight;
+  int bmwidth, bmheight;
   int i, j, k, tmpi;
   int argc=1;
   float thumb, l_thumb, l_thumbj;

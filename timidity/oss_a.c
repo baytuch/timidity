@@ -51,8 +51,6 @@
 #include <sys/soundcard.h>
 #endif /* HAVE_SYS_SOUNDCARD_H */
 
-#include <sys/ioctl.h>
-
 #include "timidity.h"
 #include "common.h"
 #include "output.h"

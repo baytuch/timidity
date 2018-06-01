@@ -970,7 +970,7 @@ int parse_sysex_event_multi(uint8 *val, int32 len, MidiEvent *evm)
        val[0] == 0x43 && /* Yamaha ID */
        val[2] == 0x4C && /* XG Model ID */
        ((val[1] <  0x10 && val[5] == 0x08 &&	/* Bulk Dump */
-         (val[4] == 0x29 || val[4] == 0x3F)) ||	/* Blocks 1 or 2 */
+         val[4] == 0x29 || val[4] == 0x3F) ||	/* Blocks 1 or 2 */
         (val[1] >= 0x10 && val[3] == 0x08)))	/* Parameter Change */
     {
 	uint8 addhigh, addmid, addlow;		/* Addresses */
@@ -5359,9 +5359,8 @@ int midi_file_save_as(char *in_name, char *out_name)
 	return -1;
     }
 
-    while((n = tf_read(buff, 1, sizeof(buff), tf)) > 0) {
-	size_t dummy = fwrite(buff, 1, n, ofp); ++dummy;
-	}
+    while((n = tf_read(buff, 1, sizeof(buff), tf)) > 0)
+	fwrite(buff, 1, n, ofp);
     ctl->cmsg(CMSG_INFO, VERB_NORMAL, "Save as %s...Done", out_name);
 
     fclose(ofp);

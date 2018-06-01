@@ -318,11 +318,11 @@ static int import_wave_load(char *sample_file, Instrument *inst)
 	struct timidity_file	*tf;
 	char			buf[12];
 	int				state;		/* initial > fmt_read > data_read */
-	int				i, chunk_size, type_index, type_size, samples = 0;
+	int				i, chunk_size, type_index, type_size, samples;
 	int32			chunk_flags;
 	Sample			*sample;
-	WAVFormatChunk	format = {0,};
-	WAVSamplerChunk	samplerc = {0,};
+	WAVFormatChunk	format;
+	WAVSamplerChunk	samplerc;
 	GeneralInstrumentInfo	instc;
 	
 	if ((tf = open_file(sample_file, 1, OF_NORMAL)) == NULL)
@@ -400,7 +400,7 @@ static int import_wave_load(char *sample_file, Instrument *inst)
 	{
 		uint8		modes;
 		int32		sample_rate, root_freq;
-		uint32		loopStart = 0, loopEnd = 0;
+		uint32		loopStart, loopEnd;
 		
 		sample_rate = 1000000000 / samplerc.dwSamplePeriod;
 		root_freq = freq_table[samplerc.dwMIDIUnityNote];
@@ -604,7 +604,7 @@ static int import_aiff_load(char *sample_file, Instrument *inst)
 	AIFFCommonChunk	common;
 	AIFFSoundDataChunk	sound;
 	GeneralInstrumentInfo	inst_info;
-	AIFFLoopInfo	loop_info = {0,0,0};
+	AIFFLoopInfo	loop_info;
 	AIFFMarkerData	*marker_data;
 	
 	if ((tf = open_file(sample_file, 1, OF_NORMAL)) == NULL)

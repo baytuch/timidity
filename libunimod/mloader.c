@@ -309,8 +309,8 @@ SL_LoadInternal (void *buffer, UWORD infmt, UWORD outfmt, int scalefactor, ULONG
   int stodo, t, u;
 
   int result, c_block = 0;	/* compression bytes until next block */
-  ITPACK status = { 0,0,0,0 };
-  UWORD incnt = 0;
+  ITPACK status;
+  UWORD incnt;
 
   while (length)
     {
@@ -636,14 +636,14 @@ SL_LoadSamples (void)
 	  s->sample->flags = (s->sample->flags & ~SF_FORMATMASK) | s->outfmt;
 	  if (s->sample->data == NULL)
 	    {
-	      FreeSampleList ();
+	      FreeSampleList (musiclist);
 	      return 1;
 	    }
 	}
       s = s->next;
     }
 
-  FreeSampleList ();
+  FreeSampleList (musiclist);
   return 0;
 }
 

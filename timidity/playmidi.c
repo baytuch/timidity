@@ -298,7 +298,7 @@ static int16 get_midi_controller_amp_depth(midi_controller *);
 /* Rx. ~ (Rcv ~) */
 static void init_rx(int);
 static void set_rx(int, int32, int);
-//static int32 get_rx(int, int32);
+static int32 get_rx(int, int32);
 static void init_rx_drum(struct DrumParts *);
 static void set_rx_drum(struct DrumParts *, int32, int);
 static int32 get_rx_drum(struct DrumParts *, int32);
@@ -4159,7 +4159,7 @@ static void process_sysex_event(int ev, int ch, int val, int b)
 			break;
 		case 0x20:	/* Delay Send Level to Reverb */
 			ctl->cmsg(CMSG_INFO,VERB_NOISY,"Delay Send Level to Reverb (%d)",val);
-			if (delay_status_gs.send_reverb != val) {
+			if (delay_status_gs.send_reverb = val) {
 				delay_status_gs.send_reverb = val;
 				recompute_delay_status_gs();
 				init_ch_delay();
@@ -6691,7 +6691,7 @@ static void do_compute_data_midi(int32 count)
 
 	for (i = 0; i < uv; i++) {
 		if (voice[i].status != VOICE_FREE) {
-			int32 *vpb = 0;
+			int32 *vpb;
 			int8 flag;
 			
 			if (channel_effect) {
@@ -7980,7 +7980,7 @@ int play_event(MidiEvent *ev)
 		channel[ch].temper_type = current_event->a;
 		ctl_mode_event(CTLE_TEMPER_TYPE, 1, ch, channel[ch].temper_type);
 		if (temper_type_mute) {
-			if ((temper_type_mute & 1 << current_event->a)
+			if (temper_type_mute & 1 << current_event->a
 					- ((current_event->a >= 0x40) ? 0x3c : 0)) {
 				SET_CHANNELMASK(channel_mute, ch);
 				ctl_mode_event(CTLE_MUTE, 1, ch, 1);
@@ -8003,7 +8003,7 @@ int play_event(MidiEvent *ev)
 			ctl_mode_event(CTLE_TEMPER_TYPE, 1, i, channel[i].temper_type);
 		}
 		if (temper_type_mute) {
-			if ((temper_type_mute & 1 << current_event->a)
+			if (temper_type_mute & 1 << current_event->a
 					- ((current_event->a >= 0x40) ? 0x3c : 0)) {
 				FILL_CHANNELMASK(channel_mute);
 				for (i = 0; i < MAX_CHANNELS; i++)

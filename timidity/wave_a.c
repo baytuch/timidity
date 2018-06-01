@@ -283,7 +283,7 @@ static int update_header(void)
     }
     lseek(dpm.fd, 40, SEEK_SET);
     tmp = LE_LONG(bytes_output);
-    ssize_t dummy = write(dpm.fd, &tmp, 4); ++dummy;
+    write(dpm.fd, &tmp, 4);
 
     lseek(dpm.fd, save_point, SEEK_SET);
     ctl->cmsg(CMSG_INFO, VERB_DEBUG,

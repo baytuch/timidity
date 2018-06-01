@@ -148,7 +148,6 @@ static inline void print_ecmd(char*, int*, int);
 #endif
 #include <limits.h>
 #include "mblock.h"
-#include "common.h"
 #include "controls.h"
 static inline void print_ecmd(char *cmd, int *args, int narg)
 {

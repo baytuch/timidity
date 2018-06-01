@@ -487,8 +487,8 @@ static void xskin_pipe_open(void) {
 }
 
 void xskin_pipe_write(char *buf) {
-  ssize_t dummy = write(pipe_out_fd,buf,strlen(buf));
-  dummy = write(pipe_out_fd,"\n",1);
+  write(pipe_out_fd,buf,strlen(buf));
+  write(pipe_out_fd,"\n",1);
 }
 
 static int xskin_pipe_ready(void) {
@@ -512,7 +512,7 @@ int xskin_pipe_read(char *buf,int bufsize) {
 
   bufsize--;
   for (i=0;i<bufsize;i++) {
-    ssize_t dummy = read(pipe_in_fd,buf+i,1); ++dummy;
+    read(pipe_in_fd,buf+i,1);
     if (buf[i]=='\n') break;
   }
   buf[i]=0;
@@ -521,7 +521,7 @@ int xskin_pipe_read(char *buf,int bufsize) {
 
 int xskin_pipe_read_direct(int32 *buf, int bufsize) {
 
-  ssize_t dummy = read( pipe_in_fd, buf, bufsize ); ++dummy;
+  read( pipe_in_fd, buf, bufsize );
 
   return 0;
 }

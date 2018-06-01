@@ -629,8 +629,8 @@ static void a_pipe_open(void) {
 }
 
 void a_pipe_write(char *buf) {
-  ssize_t dummy = write(pipe_out_fd,buf,strlen(buf));
-  dummy = write(pipe_out_fd,"\n",1);
+  write(pipe_out_fd,buf,strlen(buf));
+  write(pipe_out_fd,"\n",1);
 }
 
 static int a_pipe_ready(void) {
@@ -692,9 +692,9 @@ static void a_pipe_write_msg(char *msg)
     buf[1] = '\n';
 
     memcpy(buf + 2, &msglen, sizeof(int));
-    ssize_t dummy = write(pipe_out_fd, buf, sizeof(buf));
-    dummy = write(pipe_out_fd, msg, msglen - 1);
-    dummy = write(pipe_out_fd, "\n", 1);
+    write(pipe_out_fd, buf, sizeof(buf));
+    write(pipe_out_fd, msg, msglen - 1);
+    write(pipe_out_fd, "\n", 1);
 }
 
 static void

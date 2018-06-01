@@ -390,6 +390,23 @@ static void ctl_pass_playing_list(int n, char *args[])
 
 	play_mode->close_output();
 
+	if (ctl.flags & CTLF_DAEMONIZE)
+	{
+		int pid = fork();
+		FILE *pidf;
+		switch (pid)
+		{
+			case 0:			// child is the daemon
+				break;
+			case -1:		// error status return
+				exit(7);
+			default:		// no error, doing well
+				if ((pidf = fopen( "/var/run/timidity.pid", "w" )) != NULL )
+					fprintf( pidf, "%d\n", pid );
+				exit(0);
+		}
+	}
+
 	for (;;) {
 		server_reset();
 		doit(&alsactx);
@@ -483,7 +500,6 @@ static void stop_playing(void)
 
 static void doit(struct seq_context *ctxp)
 {
-	int err, timeout_val = 10;
 	for (;;) {
 		while (snd_seq_event_input_pending(ctxp->handle, 1)) {
 			if (do_sequencer(ctxp))
@@ -513,23 +529,13 @@ static void doit(struct seq_context *ctxp)
 		}
 		if (! ctxp->active || ! IS_STREAM_TRACE) {
 			fd_set rfds;
-			struct timeval timeout; 
+			struct timeval timeout;
 			FD_ZERO(&rfds);
 			FD_SET(ctxp->fd, &rfds);
-			timeout.tv_sec = (timeout_val / 1000);
-			timeout.tv_usec = (timeout_val % 1000) * 1000;
-			err = select(ctxp->fd + 1, &rfds, NULL, NULL, timeout_val < 0 ? NULL : &timeout);
-			if (err < 0) {
+			timeout.tv_sec = 0;
+			timeout.tv_usec = 10000; /* 10ms */
+			if (select(ctxp->fd + 1, &rfds, NULL, NULL, &timeout) < 0)
 				goto __done;
-			} else if (err == 0) {
-				if (timeout_val < 1024) {
-					timeout_val+=timeout_val;
-				} else {
-					timeout_val = -1;
-				}
-			} else {
-				timeout_val = 10;
-			}
 		}
 	}
 

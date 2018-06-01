@@ -40,20 +40,30 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif /* HAVE_UNISTD_H */
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
-#endif  /* TIME_WITH_SYS_TIME */
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif /* NAVE_SYS_STAT_H */
 #include <fcntl.h> /* for open */
+
+#ifdef HAVE_STDBOOL_H
+#include <stdbool.h>
+#endif
+
+#ifndef __bool_true_false_are_defined
+# ifdef bool
+#  undef bool
+# endif
+# ifdef ture
+#  undef ture
+# endif
+# ifdef false
+#  undef false
+# endif
+# define bool int
+# define false ((bool)0)
+# define true (!false)
+# define __bool_true_false_are_defined true
+#endif /* C99 _Bool hack */
 
 #ifdef BORLANDC_EXCEPTION
 #include <excpt.h>
@@ -301,7 +311,9 @@ static const struct option longopts[] = {
 	{ "flac-verify",            no_argument,       NULL, TIM_OPT_FLAC_VERIFY },
 	{ "flac-padding",           required_argument, NULL, TIM_OPT_FLAC_PADDING },
 	{ "flac-complevel",         required_argument, NULL, TIM_OPT_FLAC_COMPLEVEL },
+#ifdef AU_OGGFLAC
 	{ "oggflac",                no_argument,       NULL, TIM_OPT_FLAC_OGGFLAC },
+#endif /* AU_OGGFLAC */
 #endif /* AU_FLAC */
 #ifdef AU_SPEEX
 	{ "speex-quality",          required_argument, NULL, TIM_OPT_SPEEX_QUALITY },
@@ -437,7 +449,9 @@ static inline int parse_opt_output_swab(const char *);
 static inline int parse_opt_flac_verify(const char *);
 static inline int parse_opt_flac_padding(const char *);
 static inline int parse_opt_flac_complevel(const char *);
+#ifdef AU_OGGFLAC
 static inline int parse_opt_flac_oggflac(const char *);
+#endif /* AU_OGGFLAC */
 #endif /* AU_FLAC */
 #ifdef AU_SPEEX
 static inline int parse_opt_speex_quality(const char *);
@@ -2775,8 +2789,10 @@ MAIN_INTERFACE int set_tim_opt_long(int c, char *optarg, int index)
 		return parse_opt_flac_padding(arg);
 	case TIM_OPT_FLAC_COMPLEVEL:
 		return parse_opt_flac_complevel(arg);
+#ifdef AU_OGGFLAC
 	case TIM_OPT_FLAC_OGGFLAC:
 		return parse_opt_flac_oggflac(arg);
+#endif /* AU_OGGFLAC */
 #endif /* AU_FLAC */
 #ifdef AU_SPEEX
 	case TIM_OPT_SPEEX_QUALITY:
@@ -3626,8 +3642,10 @@ static inline int parse_opt_h(const char *arg)
 "               Write a PADDING block of length n",
 "             --flac-complevel=n (for Ogg FLAC only)",
 "               Set compression level n:[0..8]",
+#ifdef AU_OGGFLAC
 "             --oggflac (for Ogg FLAC only)",
 "               Output OggFLAC stream (experimental)",
+#endif /* AU_OGGFLAC */
 #endif /* AU_FLAC */
 #ifdef AU_SPEEX
 "             --speex-quality=n (for Ogg Speex only)",
@@ -3733,7 +3751,7 @@ static inline int parse_opt_h(const char *arg)
 			if (*(strchr(h, '%') + 1) != '%')
 				fprintf(fp, h, help_args[j++]);
 			else
-				fprintf(fp, "%s", h);
+				fprintf(fp, h);
 		} else
 			fputs(h, fp);
 		fputs(NLS, fp);
@@ -4363,6 +4381,7 @@ static inline int parse_opt_flac_complevel(const char *arg)
 	return 0;
 }
 
+#ifdef AU_OGGFLAC
 extern void flac_set_option_oggflac(int);
 
 static inline int parse_opt_flac_oggflac(const char *arg)
@@ -4370,6 +4389,7 @@ static inline int parse_opt_flac_oggflac(const char *arg)
 	flac_set_option_oggflac(1);
 	return 0;
 }
+#endif /* AU_OGGFLAC */
 #endif /* AU_FLAC */
 
 #ifdef AU_SPEEX
@@ -4907,11 +4927,11 @@ static RETSIGTYPE sigterm_exit(int sig)
      * function.  It is possible coredump if the signal is called in printf's.
      */
 
-    ssize_t dummy = write(2, "Terminated sig=0x", 17);
+    write(2, "Terminated sig=0x", 17);
     s[0] = "0123456789abcdef"[(sig >> 4) & 0xf];
     s[1] = "0123456789abcdef"[sig & 0xf];
     s[2] = '\n';
-    dummy = write(2, s, 3);
+    write(2, s, 3);
 
     safe_exit(1);
 }
@@ -5126,29 +5146,6 @@ MAIN_INTERFACE int timidity_pre_load_configuration(void)
 MAIN_INTERFACE int timidity_post_load_configuration(void)
 {
     int i, cmderr = 0;
-
-    /* If we're going to fork for daemon mode, we need to fork now, as
-       certain output libraries (pulseaudio) become unhappy if initialized
-       before forking and then being used from the child. */
-    if (ctl->id_character == 'A' && (ctl->flags & CTLF_DAEMONIZE))
-    {
-	int pid = fork();
-	FILE *pidf;
-	switch (pid)
-	{
-	    case 0:		// child is the daemon
-		break;
-	    case -1:		// error status return
-		exit(7);
-	    default:		// no error, doing well
-		if ((pidf = fopen( "/var/run/timidity/timidity.pid", "w" )) != NULL )
-		{
-		    fprintf( pidf, "%d\n", pid );
-		    fclose( pidf );
-                }
-		exit(0);
-	}
-    }
 
     if(play_mode == &null_play_mode)
     {
@@ -5469,14 +5466,14 @@ extern int volatile save_playlist_once_before_exit_flag;
 static int CoInitializeOK = 0;
 #endif
 
-static inline int directory_p(const char* path)
+static inline bool directory_p(const char* path)
 {
 #if defined ( IA_W32GUI ) || defined ( IA_W32G_SYN )
     return is_directory(path);
 #else
     struct stat st;
     if(stat(path, &st) != -1) return S_ISDIR(st.st_mode);
-    return 0;
+    return false;
 #endif
 }
 
@@ -5652,11 +5649,11 @@ int main(int argc, char **argv)
 	    }
 
 	    ctl->cmsg(CMSG_FATAL, VERB_NORMAL,
-		      "%s: Error reading configuration file.\nPlease check "
+		      "%s: Can't read any configuration file.\nPlease check "
 		      "%s or %s", program_name, config1, config2);
 #else
 	    ctl->cmsg(CMSG_FATAL, VERB_NORMAL,
-		      "%s: Error reading configuration file.\nPlease check "
+		      "%s: Can't read any configuration file.\nPlease check "
 		      CONFIG_FILE, program_name);
 #endif /* __W32__ */
 	}

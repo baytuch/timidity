@@ -56,10 +56,6 @@
 #include "filter.h"
 #include "resample.h"
 
-// use from freq.c
-float freq_fourier(Sample *sp, int *chord);
-int assign_pitch_to_freq(float freq);
-
 #define FILENAME_NORMALIZE(fname) url_expand_home_dir(fname)
 #define FILENAME_REDUCED(fname)   url_unexpand_home_dir(fname)
 #define SFMalloc(rec, count)      new_segment(&(rec)->pool, count)

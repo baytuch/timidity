@@ -758,8 +758,8 @@ static void k_pipe_puts(char *str)
 	int len;
 	char lf = '\n';
 	len = line_strlen(str);
-	ssize_t dummy = write(fpip_out, str, len);
-	dummy = write(fpip_out, &lf, 1);
+	write(fpip_out, str, len);
+	write(fpip_out, &lf, 1);
 }
 
 
@@ -772,8 +772,7 @@ int k_pipe_gets(char *str, int maxlen)
 	/* at least 5 letters (4+\n) command */
 	len = 0;
 	for (p = str; len < maxlen - 1; p++) {
-		ssize_t dummy = read(fpip_in, p, 1);
-		dummy += 1;
+		read(fpip_in, p, 1);
 		if (*p == '\n')
 			break;
 		len++;

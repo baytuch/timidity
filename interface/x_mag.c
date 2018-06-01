@@ -187,7 +187,7 @@ magdata *mag_create(char *file)
   magdata mg,*res;
   struct magfilehdr mfh;
   int len,c,header_pos;
-  unsigned char *flaga=NULL,*flagb=NULL,*pixels=NULL;
+  char *flaga=NULL,*flagb=NULL,*pixels=NULL;
   if((res=mag_search(file))){
     return res;
   }

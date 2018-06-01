@@ -27,16 +27,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#if TIME_WITH_SYS_TIME
-# include <sys/time.h>
-# include <time.h>
-#else
-# if HAVE_SYS_TIME_H
-#  include <sys/time.h>
-# else
-#  include <time.h>
-# endif
-#endif  /* TIME_WITH_SYS_TIME */
+#include <time.h>
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif /* HAVE_SYS_TIME_H */
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif /* HAVE_SYS_TYPES_H */
@@ -210,9 +204,8 @@ url_dumpfile(URL url, const char *ext)
     return NULL;
   }
 
-  while((n = url_read(url, buff, sizeof(buff))) > 0) {
-    size_t dummy = fwrite(buff, 1, n, fp); ++dummy;
-  }
+  while((n = url_read(url, buff, sizeof(buff))) > 0)
+    fwrite(buff, 1, n, fp);
   fclose(fp);
   return safe_strdup(filename);
 }
@@ -412,8 +405,7 @@ struct timidity_file *open_file(char *name, int decompress, int noise_mode)
     }
 
   /* First try the given name */
-  /* strncpy(current_filename, url_unexpand_home_dir(name), 1023); */
-  strncpy(current_filename, name, 1023);
+  strncpy(current_filename, url_unexpand_home_dir(name), 1023);
   current_filename[1023]='\0';
 
   if(noise_mode)
@@ -595,7 +587,6 @@ void *safe_malloc(size_t count)
 #endif /* ABORT_AT_FATAL */
     safe_exit(10);
     /*NOTREACHED*/
-	return 0;
 }
 
 void *safe_large_malloc(size_t count)
@@ -622,7 +613,6 @@ void *safe_large_malloc(size_t count)
 #endif /* ABORT_AT_FATAL */
     safe_exit(10);
     /*NOTREACHED*/
-	return 0;
 }
 
 void *safe_realloc(void *ptr, size_t count)
@@ -659,7 +649,6 @@ void *safe_realloc(void *ptr, size_t count)
 #endif /* ABORT_AT_FATAL */
     safe_exit(10);
     /*NOTREACHED*/
-	return 0;
 }
 
 /* This'll allocate memory or die. */
@@ -684,7 +673,6 @@ char *safe_strdup(const char *s)
 #endif /* ABORT_AT_FATAL */
     safe_exit(10);
     /*NOTREACHED*/
-	return 0;
 }
 
 /* free ((void **)ptr_list)[0..count-1] and ptr_list itself */
