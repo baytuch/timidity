@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian QA Group <packages@qa.debian.org>
 Build-Depends:
  debhelper (>= 11),
- libasound2-dev [!kfreebsd-i386 !kfreebsd-amd64 !hurd-i386],
+ libasound2-dev [linux-any],
  libaudio-dev,
  libaudiofile-dev,
  libflac-dev (>= 1.1.4),
