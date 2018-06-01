@@ -344,7 +344,7 @@ timidity (2.13.2-9) unstable; urgency=low
 timidity (2.13.2-8) unstable; urgency=low
 
   * New maintainer (Closes: #415829)
- 
+
  -- Joost Yervante Damad <andete@debian.org>  Fri, 23 Mar 2007 19:49:25 +0100
 
 timidity (2.13.2-7.3) unstable; urgency=high
@@ -443,7 +443,7 @@ timidity (2.13.2-3) unstable; urgency=low
     ftp servers for sf.net are not realiable at all
   * Drop all aRts functionality that requires arts_free().  See Debian
     bug #247793, TiMidity++ bug #25, KDE bug #84514.  aRts users, you better
-    give me some feedback about how well 2.13.2-3 works with aRts, otherwise 
+    give me some feedback about how well 2.13.2-3 works with aRts, otherwise
     I will seriously consider killing aRts support altogether for the next
     stable release (closes: #239982)
 
@@ -587,8 +587,8 @@ timidity (2.11.2-3) unstable; urgency=low
 
 timidity (2.11.2-2) unstable; urgency=low
 
-  * The "I am back from the bitbucket!" release. 
-    This one is just a quick new-maintainer-around upload, with some minor 
+  * The "I am back from the bitbucket!" release.
+    This one is just a quick new-maintainer-around upload, with some minor
     cleanup;
   * New maintainer (closes: #222958);
   * Acknowledging NMUs:
@@ -842,7 +842,7 @@ timidity (0.2i-3) contrib; urgency=low
   * Uses wish instead of wishx for tcl interface (fixes #6445).
   * No longer treats instrument 16 as percussion by default.
   * Minor directory re-organization.
-  
+
  -- Klee Dienes <klee@debian.org>  Thu, 16 Jan 1997 12:51:17 -0500
 
 timidity (0.2i-2) contrib; urgency=low
@@ -856,5 +856,3 @@ timidity (0.2i-1) contrib; urgency=low
   * Initial release.
 
  -- Klee Dienes <klee@debian.org>  Thu, 5 Sep 1996 04:36:32 -0700
-
-
