@@ -1,3 +1,3 @@
+debian/timidity-interfaces-extra.desktop   usr/share/applications
 usr/lib/timidity/*tcl*
-usr/lib/timidity/interface_[skTig]*
-usr/share/applications/timidity-interfaces-extra.desktop
+usr/lib/timidity/if_*so

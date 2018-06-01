@@ -1,0 +1,6 @@
+doc/timidity.1
+doc/timidity.cfg.5
+interface/tclIndex
+interface/*.so
+interface/timidity.el
+interface/tkmidity.tcl
