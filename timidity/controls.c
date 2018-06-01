@@ -24,6 +24,11 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif /* HAVE_UNISTD_H */
+
 #include "interface.h"
 #include "timidity.h"
 #include "controls.h"
@@ -85,13 +90,6 @@ extern ControlMode dumb_control_mode;
 # endif
 #endif
 
-#ifdef IA_DYNAMIC
-  extern ControlMode dynamic_control_mode;
-# ifndef DEFAULT_CONTROL_MODE
-#  define DEFAULT_CONTROL_MODE &dynamic_control_mode
-# endif
-#endif /* IA_DYNAMIC */
-
 #ifdef IA_EMACS
   extern ControlMode emacs_control_mode;
 # ifndef DEFAULT_CONTROL_MODE
@@ -150,6 +148,11 @@ extern ControlMode winsyn_control_mode;
 extern ControlMode portmidisyn_control_mode;
 #endif /* IA_PORTMIDISYN */
 
+#ifdef IA_NPSYN
+extern ControlMode npsyn_control_mode;
+#endif /* IA_NPSYN */
+
+
 #ifdef IA_MACOSX
 extern ControlMode macosx_control_mode;
 #endif /* IA_MACOSX */
@@ -206,11 +209,8 @@ ControlMode *ctl_list[]={
 #ifdef IA_W32G_SYN
   &winsyn_control_mode,
 #endif /* IA_W32GUI */
-#ifndef __MACOS__
-  &dumb_control_mode,
-#endif
-#ifdef IA_DYNAMIC
-  &dynamic_control_mode,
+#if !defined(__MACOS__)  && !defined(IA_W32GUI) && !defined(IA_W32G_SYN)
+	&dumb_control_mode,
 #endif
 #ifdef IA_PLUGIN
   &plugin_control_mode,
@@ -227,7 +227,18 @@ ControlMode *ctl_list[]={
 #ifdef IA_PORTMIDISYN
   &portmidisyn_control_mode,
 #endif
+#ifdef IA_NPSYN
+  &npsyn_control_mode,
+#endif
   0
 };
 
 ControlMode *ctl=DEFAULT_CONTROL_MODE;
+
+int std_write(int fd, const void *buffer, int size)
+{
+    /* redirect stdout writes */
+    if (fd == 1 && ctl->write)
+	return ctl->write((char*)buffer, size);
+    return write(fd, buffer, size);
+}

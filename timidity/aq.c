@@ -25,6 +25,9 @@
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#ifdef __POCC__
+#include <sys/types.h>
+#endif //for off_t
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
@@ -87,7 +90,7 @@ static int32 estimate_queue_size(void);
 
 /* effect.c */
 extern void init_effect(void);
-extern int do_effect(int32* buf, int32 count);
+extern void do_effect(int32* buf, int32 count);
 
 int aq_calc_fragsize(void)
 {
@@ -161,12 +164,7 @@ void aq_setup(void)
     else
     {
 	device_qsize = 0;
-	if(base_buckets)
-	{
-	    free(base_buckets[0].data);
-	    free(base_buckets);
-	    base_buckets = NULL;
-	}
+	free_soft_queue();
 	nbuckets = 0;
     }
 
@@ -365,18 +363,23 @@ static void alloc_soft_queue(void)
     int i;
     char *base;
 
-    if(base_buckets)
-    {
-	free(base_buckets[0].data);
-	free(base_buckets);
-	base_buckets = NULL;
-    }
+    free_soft_queue();
 
     base_buckets = (AudioBucket *)safe_malloc(nbuckets * sizeof(AudioBucket));
     base = (char *)safe_malloc(nbuckets * bucket_size);
     for(i = 0; i < nbuckets; i++)
 	base_buckets[i].data = base + i * bucket_size;
     flush_buckets();
+}
+
+void free_soft_queue(void)
+{
+    if(base_buckets)
+    {
+	free(base_buckets[0].data);
+	free(base_buckets);
+	base_buckets = NULL;
+    }
 }
 
 /* aq_fill_one() transfers one audio bucket to device. */

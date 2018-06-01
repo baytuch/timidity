@@ -891,7 +891,7 @@ dnl along with this program; if not, write to the Free Software
 dnl Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 dnl MY_DEFINE(VARIABLE)
-AC_DEFUN(MY_DEFINE,
+AC_DEFUN([MY_DEFINE],
 [cat >> confdefs.h <<EOF
 [#define] $1 1
 EOF
@@ -903,7 +903,7 @@ dnl                  action-if-yes-or-dynamic,
 dnl		     $5
 dnl		     action-if-yes,action-if-dynamic,action-if-no)
 dnl		     $6            $7                $8
-AC_DEFUN(CONFIG_INTERFACE,
+AC_DEFUN([CONFIG_INTERFACE],
 [AC_ARG_ENABLE($1,[$4],
 [case "x$enable_$1" in xyes|xdynamic) $5 ;; esac])
 case "x$enable_$1" in
@@ -913,7 +913,7 @@ xyes)
   $6
   ;;
 xdynamic)
-  dynamic_targets="$dynamic_targets interface_$3.\$(so)"
+  dynamic_targets="$dynamic_targets if_$1.\$(so)"
   $7
   ;;
 *)
@@ -927,9 +927,9 @@ dnl CHECK_DLSYM_UNDERSCORE([ACTION-IF-NEED [, ACTION IF-NOT-NEED]])
 dnl variable input:
 dnl   CC CFLAGS CPPFLAGS LDFLAGS LIBS SHCFLAGS SHLD SHLDFLAGS
 dnl   ac_cv_header_dlfcn_h lib_dl_opt so
-AC_DEFUN(CHECK_DLSYM_UNDERSCORE,
+AC_DEFUN([CHECK_DLSYM_UNDERSCORE],
 [dnl Check if dlsym need a leading underscore
-AC_MSG_CHECKING(whether your dlsym() needs a leading underscore)
+AC_MSG_CHECKING([whether your dlsym() needs a leading underscore])
 AC_CACHE_VAL(timidity_cv_func_dlsym_underscore,
 [case "$ac_cv_header_dlfcn_h" in
 yes) i_dlfcn=define;;
@@ -1018,9 +1018,9 @@ esac
 
 dnl contains program from perl5
 dnl CONTAINS_INIT()
-AC_DEFUN(CONTAINS_INIT,
+AC_DEFUN([CONTAINS_INIT],
 [dnl Some greps do not return status, grrr.
-AC_MSG_CHECKING(whether grep returns status)
+AC_MSG_CHECKING([whether grep returns status])
 echo "grimblepritz" >grimble
 if grep blurfldyick grimble >/dev/null 2>&1 ; then
 	contains="./contains"
@@ -1045,7 +1045,7 @@ esac
 ])
 
 dnl CONTAINS(word,filename,action-if-found,action-if-not-found)
-AC_DEFUN(CONTAINS,
+AC_DEFUN([CONTAINS],
 [if $contains "^[$1]"'[$]' $2 >/dev/null 2>&1; then
   [$3]
 else
@@ -1054,7 +1054,7 @@ fi
 ])
 
 dnl SET_UNIQ_WORDS(shell-variable,words...)
-AC_DEFUN(SET_UNIQ_WORDS,
+AC_DEFUN([SET_UNIQ_WORDS],
 [rm -f wordtmp >/dev/null 2>&1
 val=''
 for f in $2; do
@@ -1067,7 +1067,7 @@ rm -f wordtmp >/dev/null 2>&1
 
 dnl WAPI_CHECK_FUNC(FUNCTION, INCLUDES, TEST-BODY,
 		    [ACTION-FI-FOUND [, ACTION-IF-NOT-FOUND]])
-AC_DEFUN(WAPI_CHECK_FUNC,
+AC_DEFUN([WAPI_CHECK_FUNC],
 [AC_MSG_CHECKING(for $1)
 AC_CACHE_VAL(wapi_cv_func_$1,
 [AC_TRY_LINK([#include <windows.h>
@@ -1088,7 +1088,7 @@ dnl WAPI_CHECK_LIB(LIBRARY, FUNCTION,
 dnl		INCLUDES, TEST-BODY
 dnl		[, ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND
 dnl		[, OTHER-LIBRARIES]]])
-AC_DEFUN(WAPI_CHECK_LIB,
+AC_DEFUN([WAPI_CHECK_LIB],
 [AC_MSG_CHECKING([for $2 in -l$1])
 ac_lib_var=`echo $1['_']$2 | sed 'y%./+-%__p_%'`
 AC_CACHE_VAL(wapi_cv_lib_$ac_lib_var,
@@ -1112,18 +1112,18 @@ fi
 ])
 
 dnl EXTRACT_CPPFLAGS(CPPFLAGS-to-append,others-to-append,FLAGS)
-AC_DEFUN(EXTRACT_CPPFLAGS,
+AC_DEFUN([EXTRACT_CPPFLAGS],
 [for f in $3; do
     case ".$f" in
 	.-I?*|.-D?*)	$1="[$]$1 $f" ;;
-	*)		$2="[$]$1 $f" ;;
+	*)		$2="[$]$2 $f" ;;
     esac
 done
 ])
 
 
 dnl CHECK_COMPILER_OPTION(OPTIONS [, ACTION-IF-SUCCEED [, ACTION-IF-FAILED]])
-AC_DEFUN(CHECK_COMPILER_OPTION,
+AC_DEFUN([CHECK_COMPILER_OPTION],
 [AC_MSG_CHECKING([whether -$1 option is recognized])
 ac_ccoption=`echo $1 | sed 'y%./+-%__p_%'`
 AC_CACHE_VAL(timidity_cv_ccoption_$ac_ccoption,
@@ -1156,7 +1156,7 @@ dnl MY_SEARCH_LIBS(FUNCTION, LIBRARIES [, ACTION-IF-FOUND
 dnl            [, ACTION-IF-NOT-FOUND [, OTHER-LIBRARIES]]])
 dnl Search for a library defining FUNC, if it's not already available.
 
-AC_DEFUN(MY_SEARCH_LIBS,
+AC_DEFUN([MY_SEARCH_LIBS],
 [AC_CACHE_CHECK([for library containing $1], [timidity_cv_search_$1],
 [ac_func_search_save_LIBS="$LIBS"
 timidity_cv_search_$1="no"
@@ -1170,6 +1170,7 @@ if test "$timidity_cv_search_$1" != "no"; then
 else :
   $4
 fi])
+
 
 # Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003
 #   Free Software Foundation, Inc.
@@ -1248,7 +1249,7 @@ dnl
 dnl For backwards compatibility, if ACTION_IF_NOT_FOUND is not specified,
 dnl and the alsa libraries are not found, a fatal AC_MSG_ERROR() will result.
 dnl
-AC_DEFUN(AM_PATH_ALSA,
+AC_DEFUN([AM_PATH_ALSA],
 [dnl Save the original CFLAGS, LDFLAGS, and LIBS
 alsa_save_CFLAGS="$CFLAGS"
 alsa_save_LDFLAGS="$LDFLAGS"
@@ -1259,18 +1260,20 @@ dnl
 dnl Get the cflags and libraries for alsa
 dnl
 AC_ARG_WITH(alsa-prefix,
-[  --with-alsa-prefix=PFX  Prefix where Alsa library is installed(optional)],
-[alsa_prefix="$withval"], [alsa_prefix=""])
+	    AS_HELP_STRING([--with-alsa-prefix=PFX],
+	    		   [Prefix where Alsa library is installed(optional)]),
+	    [alsa_prefix="$withval"], [alsa_prefix=""])
 
 AC_ARG_WITH(alsa-inc-prefix,
-[  --with-alsa-inc-prefix=PFX  Prefix where include libraries are (optional)],
-[alsa_inc_prefix="$withval"], [alsa_inc_prefix=""])
+	    AS_HELP_STRING([--with-alsa-inc-prefix=PFX],
+	    		   [Prefix where include libraries are (optional)]),
+	    [alsa_inc_prefix="$withval"], [alsa_inc_prefix=""])
 
 dnl FIXME: this is not yet implemented
 AC_ARG_ENABLE(alsatest,
-[  --disable-alsatest      Do not try to compile and run a test Alsa program],
-[enable_alsatest=no],
-[enable_alsatest=yes])
+	      AS_HELP_STRING([--disable-alsatest],
+	      		     [Do not try to compile and run a test Alsa program]),
+	      [enable_alsatest=no], [enable_alsatest=yes])
 
 dnl Add any special include directories
 AC_MSG_CHECKING(for ALSA CFLAGS)
@@ -1386,165 +1389,7 @@ dnl That should be it.  Now just export out symbols:
 AC_SUBST(ALSA_CFLAGS)
 AC_SUBST(ALSA_LIBS)
 ])
-dnl This should be pulled in from arts.m4
-dnl
-dnl Oh my word, I've never hacked automake before - let me know if this is a
-dnl complete rubbish!
-dnl Peter L Jones 2002-05-12
-dnl Snarfed from the ESD code below - but the faults are all mine!
 
-
-dnl AM_PATH_ARTS([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
-dnl Test for aRts, and define ARTS_CFLAGS and ARTS_LIBS
-dnl
-AC_DEFUN(AM_PATH_ARTS,
-	[dnl 
-dnl Get the cflags and libraries from the arts-config script
-dnl
-AC_ARG_WITH(arts-prefix,[  --with-arts-prefix=PFX   Prefix where ARTS is installed (optional)],
-	arts_prefix="$withval", arts_prefix="")
-AC_ARG_ENABLE(artstest, [  --disable-artstest       Do not try to compile and run a test ARTS program],
-	, enable_artstest=yes)
-
-  if test x$arts_prefix != x ; then
-     arts_args="$arts_args --prefix=$arts_prefix"
-     if test x${ARTS_CONFIG+set} != xset ; then
-        ARTS_CONFIG=$arts_prefix/bin/artsc-config
-     fi
-  fi
-
-  AC_PATH_PROG(ARTS_CONFIG, artsc-config, no)
-  min_arts_version=ifelse([$1], ,0.9.5,$1)
-  AC_MSG_CHECKING(for ARTS - version >= $min_arts_version)
-  no_arts=""
-  if test "$ARTS_CONFIG" = "no" ; then
-    no_arts=yes
-  else
-    ARTS_CFLAGS=`$ARTS_CONFIG $artsconf_args --cflags`
-    ARTS_LIBS=`$ARTS_CONFIG $artsconf_args --libs`
-
-    arts_major_version=`$ARTS_CONFIG $arts_args --version | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
-    arts_minor_version=`$ARTS_CONFIG $arts_args --version | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
-    arts_micro_version=`$ARTS_CONFIG $arts_config_args --version | \
-           sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
-    if test "x$enable_artstest" = "xyes" ; then
-      ac_save_CFLAGS="$CFLAGS"
-      ac_save_LIBS="$LIBS"
-      CFLAGS="$CFLAGS $ARTS_CFLAGS"
-      LIBS="$LIBS $ARTS_LIBS"
-dnl
-dnl Now check if the installed ARTS is sufficiently new. (Also sanity
-dnl checks the results of arts-config to some extent
-dnl
-      rm -f conf.artstest
-      AC_TRY_RUN([
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <artsc.h>
-
-char*
-my_strdup (char *str)
-{
-  char *new_str;
-  
-  if (str)
-    {
-      new_str = malloc ((strlen (str) + 1) * sizeof(char));
-      strcpy (new_str, str);
-    }
-  else
-    new_str = NULL;
-  
-  return new_str;
-}
-
-int main ()
-{
-  int major, minor, micro;
-  char *tmp_version;
-
-  system ("touch conf.artstest");
-
-  /* HP/UX 9 (%@#!) writes to sscanf strings */
-  tmp_version = my_strdup("$min_arts_version");
-  if (sscanf(tmp_version, "%d.%d.%d", &major, &minor, &micro) != 3) {
-     printf("%s, bad version string\n", "$min_arts_version");
-     exit(1);
-   }
-
-   if (($arts_major_version > major) ||
-      (($arts_major_version == major) && ($arts_minor_version > minor)) ||
-      (($arts_major_version == major) && ($arts_minor_version == minor) && ($arts_micro_version >= micro)))
-    {
-      return 0;
-    }
-  else
-    {
-      printf("\n*** 'artsc-config --version' returned %d.%d.%d, but the minimum version\n", $arts_major_version, $arts_minor_version, $arts_micro_version);
-      printf("*** of ARTS required is %d.%d.%d. If artsc-config is correct, then it is\n", major, minor, micro);
-      printf("*** best to upgrade to the required version.\n");
-      printf("*** If artsc-config was wrong, set the environment variable ARTS_CONFIG\n");
-      printf("*** to point to the correct copy of artsc-config, and remove the file\n");
-      printf("*** config.cache before re-running configure\n");
-      return 1;
-    }
-}
-
-],, no_arts=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
-       CFLAGS="$ac_save_CFLAGS"
-       LIBS="$ac_save_LIBS"
-     fi
-  fi
-  if test "x$no_arts" = x ; then
-     AC_MSG_RESULT(yes)
-     ifelse([$2], , :, [$2])     
-  else
-     AC_MSG_RESULT(no)
-     if test "$ARTS_CONFIG" = "no" ; then
-       echo "*** The artsc-config script installed by ARTS could not be found"
-       echo "*** If ARTS was installed in PREFIX, make sure PREFIX/bin is in"
-       echo "*** your path, or set the ARTS_CONFIG environment variable to the"
-       echo "*** full path to artsc-config."
-     else
-       if test -f conf.artstest ; then
-        :
-       else
-          echo "*** Could not run ARTS test program, checking why..."
-          CFLAGS="$CFLAGS $ARTS_CFLAGS"
-          LIBS="$LIBS $ARTS_LIBS"
-          AC_TRY_LINK([
-#include <stdio.h>
-#include <artsc.h>
-],      [ return 0; ],
-        [ echo "*** The test program compiled, but did not run. This usually means"
-          echo "*** that the run-time linker is not finding ARTS or finding the wrong"
-          echo "*** version of ARTS. If it is not finding ARTS, you'll need to set your"
-          echo "*** LD_LIBRARY_PATH environment variable, or edit /etc/ld.so.conf to point"
-          echo "*** to the installed location  Also, make sure you have run ldconfig if that"
-          echo "*** is required on your system"
-	  echo "***"
-          echo "*** If you have an old version installed, it is best to remove it, although"
-          echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"],
-        [ echo "*** The test program failed to compile or link. See the file config.log for the"
-          echo "*** exact error that occured. This usually means ARTS was incorrectly installed"
-          echo "*** or that you have moved ARTS since it was installed. In the latter case, you"
-          echo "*** may want to edit the arts-config script: $ARTS_CONFIG" ])
-          CFLAGS="$ac_save_CFLAGS"
-          LIBS="$ac_save_LIBS"
-       fi
-     fi
-     ARTS_CFLAGS=""
-     ARTS_LIBS=""
-     ifelse([$3], , :, [$3])
-  fi
-  AC_SUBST(ARTS_CFLAGS)
-  AC_SUBST(ARTS_LIBS)
-  rm -f conf.artstest
-])
-dnl End of aRts
 # Configure paths for ESD
 # Manish Singh    98-9-30
 # stolen back from Frank Belew
@@ -1554,16 +1399,22 @@ dnl End of aRts
 dnl AM_PATH_ESD([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
 dnl Test for ESD, and define ESD_CFLAGS and ESD_LIBS
 dnl
-AC_DEFUN(AM_PATH_ESD,
+AC_DEFUN([AM_PATH_ESD],
 [dnl 
 dnl Get the cflags and libraries from the esd-config script
 dnl
-AC_ARG_WITH(esd-prefix,[  --with-esd-prefix=PFX   Prefix where ESD is installed (optional)],
-            esd_prefix="$withval", esd_prefix="")
-AC_ARG_WITH(esd-exec-prefix,[  --with-esd-exec-prefix=PFX Exec prefix where ESD is installed (optional)],
-            esd_exec_prefix="$withval", esd_exec_prefix="")
-AC_ARG_ENABLE(esdtest, [  --disable-esdtest       Do not try to compile and run a test ESD program],
-		    , enable_esdtest=yes)
+AC_ARG_WITH(esd-prefix,
+	    AS_HELP_STRING([--with-esd-prefix=PFX],
+	    		   [Prefix where ESD is installed (optional)]),
+            [esd_prefix="$withval"], [esd_prefix=""])
+AC_ARG_WITH(esd-exec-prefix,
+	    AS_HELP_STRING([--with-esd-exec-prefix=PFX],
+	    		   [Exec prefix where ESD is installed (optional)]),
+            [esd_exec_prefix="$withval"], [esd_exec_prefix=""])
+AC_ARG_ENABLE(esdtest,
+	      AS_HELP_STRING([--disable-esdtest],
+	      		     [Do not try to compile and run a test ESD program]),
+		    , [enable_esdtest=yes])
 
   if test x$esd_exec_prefix != x ; then
      esd_args="$esd_args --exec-prefix=$esd_exec_prefix"
@@ -1719,7 +1570,7 @@ int main ()
 dnl AM_ESD_SUPPORTS_MULTIPLE_RECORD([ACTION-IF-SUPPORTS [, ACTION-IF-NOT-SUPPORTS]])
 dnl Test, whether esd supports multiple recording clients (version >=0.2.21)
 dnl
-AC_DEFUN(AM_ESD_SUPPORTS_MULTIPLE_RECORD,
+AC_DEFUN([AM_ESD_SUPPORTS_MULTIPLE_RECORD],
 [dnl
   AC_MSG_NOTICE([whether installed esd version supports multiple recording clients])
   ac_save_ESD_CFLAGS="$ESD_CFLAGS"
@@ -1748,14 +1599,25 @@ AC_DEFUN(AM_ESD_SUPPORTS_MULTIPLE_RECORD,
 dnl XIPH_PATH_AO([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for libao, and define AO_CFLAGS and AO_LIBS
 dnl
-AC_DEFUN(XIPH_PATH_AO,
+AC_DEFUN([XIPH_PATH_AO],
 [dnl 
 dnl Get the cflags and libraries
 dnl
-AC_ARG_WITH(ao,[  --with-ao=PFX   Prefix where libao is installed (optional)], ao_prefix="$withval", ao_prefix="")
-AC_ARG_WITH(ao-libraries,[  --with-ao-libraries=DIR   Directory where libao library is installed (optional)], ao_libraries="$withval", ao_libraries="")
-AC_ARG_WITH(ao-includes,[  --with-ao-includes=DIR   Directory where libao header files are installed (optional)], ao_includes="$withval", ao_includes="")
-AC_ARG_ENABLE(aotest, [  --disable-aotest       Do not try to compile and run a test ao program],, enable_aotest=yes)
+AC_ARG_WITH(ao,
+	    AS_HELP_STRING([--with-ao=PFX], [Prefix where libao is installed (optional)]),
+	    		   [ao_prefix="$withval"], [ao_prefix=""])
+AC_ARG_WITH(ao-libraries,
+	    AS_HELP_STRING([--with-ao-libraries=DIR],
+	    		   [Directory where libao library is installed (optional)]),
+	    [ao_libraries="$withval"], [ao_libraries=""])
+AC_ARG_WITH(ao-includes,
+	    AS_HELP_STRING([--with-ao-includes=DIR],
+	    		   [Directory where libao header files are installed (optional)]),
+	    [ao_includes="$withval"], [ao_includes=""])
+AC_ARG_ENABLE(aotest,
+	      AS_HELP_STRING([--disable-aotest],
+	      		     [Do not try to compile and run a test ao program]),,
+	      [enable_aotest=yes])
 
 
   if test "x$ao_libraries" != "x" ; then
@@ -1857,17 +1719,29 @@ int main ()
 # Jack Moffitt <jack@icecast.org> 10-21-2000
 # Shamelessly stolen from Owen Taylor and Manish Singh
 
-dnl AM_PATH_OGG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl XIPH_PATH_OGG([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for libogg, and define OGG_CFLAGS and OGG_LIBS
 dnl
-AC_DEFUN(AM_PATH_OGG,
+AC_DEFUN([XIPH_PATH_OGG],
 [dnl 
 dnl Get the cflags and libraries
 dnl
-AC_ARG_WITH(ogg,[  --with-ogg=PFX   Prefix where libogg is installed (optional)], ogg_prefix="$withval", ogg_prefix="")
-AC_ARG_WITH(ogg-libraries,[  --with-ogg-libraries=DIR   Directory where libogg library is installed (optional)], ogg_libraries="$withval", ogg_libraries="")
-AC_ARG_WITH(ogg-includes,[  --with-ogg-includes=DIR   Directory where libogg header files are installed (optional)], ogg_includes="$withval", ogg_includes="")
-AC_ARG_ENABLE(oggtest, [  --disable-oggtest       Do not try to compile and run a test Ogg program],, enable_oggtest=yes)
+AC_ARG_WITH(ogg,
+	    AS_HELP_STRING([--with-ogg=PFX],
+	    		   [Prefix where libogg is installed (optional)]),
+	    [ogg_prefix="$withval"], [ogg_prefix=""])
+AC_ARG_WITH(ogg-libraries,
+	    AS_HELP_STRING([--with-ogg-libraries=DIR],
+	    		   [Directory where libogg library is installed (optional)]),
+	    [ogg_libraries="$withval"], [ogg_libraries=""])
+AC_ARG_WITH(ogg-includes,
+	    AS_HELP_STRING([--with-ogg-includes=DIR],
+	    		   [Directory where libogg header files are installed (optional)]),
+	    [ogg_includes="$withval"], [ogg_includes=""])
+AC_ARG_ENABLE(oggtest,
+	      AS_HELP_STRING([--disable-oggtest],
+	      		     [Do not try to compile and run a test Ogg program]),,
+	      [enable_oggtest=yes])
 
   if test "x$ogg_libraries" != "x" ; then
     OGG_LIBS="-L$ogg_libraries"
@@ -1943,8 +1817,7 @@ int main ()
        echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"],
        [ echo "*** The test program failed to compile or link. See the file config.log for the"
        echo "*** exact error that occured. This usually means Ogg was incorrectly installed"
-       echo "*** or that you have moved Ogg since it was installed. In the latter case, you"
-       echo "*** may want to edit the ogg-config script: $OGG_CONFIG" ])
+       echo "*** or that you have moved Ogg since it was installed." ])
        CFLAGS="$ac_save_CFLAGS"
        LIBS="$ac_save_LIBS"
      fi
@@ -1960,18 +1833,31 @@ int main ()
 # Configure paths for libvorbis
 # Jack Moffitt <jack@icecast.org> 10-21-2000
 # Shamelessly stolen from Owen Taylor and Manish Singh
+# thomasvs added check for vorbis_bitrate_addblock which is new in rc3
 
-dnl AM_PATH_VORBIS([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
+dnl XIPH_PATH_VORBIS([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for libvorbis, and define VORBIS_CFLAGS and VORBIS_LIBS
 dnl
-AC_DEFUN(AM_PATH_VORBIS,
+AC_DEFUN([XIPH_PATH_VORBIS],
 [dnl 
 dnl Get the cflags and libraries
 dnl
-AC_ARG_WITH(vorbis,[  --with-vorbis=PFX   Prefix where libvorbis is installed (optional)], vorbis_prefix="$withval", vorbis_prefix="")
-AC_ARG_WITH(vorbis-libraries,[  --with-vorbis-libraries=DIR   Directory where libvorbis library is installed (optional)], vorbis_libraries="$withval", vorbis_libraries="")
-AC_ARG_WITH(vorbis-includes,[  --with-vorbis-includes=DIR   Directory where libvorbis header files are installed (optional)], vorbis_includes="$withval", vorbis_includes="")
-AC_ARG_ENABLE(vorbistest, [  --disable-vorbistest       Do not try to compile and run a test Vorbis program],, enable_vorbistest=yes)
+AC_ARG_WITH(vorbis,
+	    AS_HELP_STRING([--with-vorbis=PFX],
+	    		   [Prefix where libvorbis is installed (optional)]),
+	    [vorbis_prefix="$withval"], [vorbis_prefix=""])
+AC_ARG_WITH(vorbis-libraries,
+	    AS_HELP_STRING([--with-vorbis-libraries=DIR],
+			   [Directory where libvorbis library is installed (optional)]),
+	    [vorbis_libraries="$withval"], [vorbis_libraries=""])
+AC_ARG_WITH(vorbis-includes,
+	    AS_HELP_STRING([--with-vorbis-includes=DIR],
+	    		   [Directory where libvorbis header files are installed (optional)]),
+	    [vorbis_includes="$withval"], [vorbis_includes=""])
+AC_ARG_ENABLE(vorbistest,
+	      AS_HELP_STRING([--disable-vorbistest],
+			     [Do not try to compile and run a test Vorbis program]),
+	      , [enable_vorbistest=yes])
 
   if test "x$vorbis_libraries" != "x" ; then
     VORBIS_LIBS="-L$vorbis_libraries"
@@ -2002,7 +1888,7 @@ AC_ARG_ENABLE(vorbistest, [  --disable-vorbistest       Do not try to compile an
     ac_save_CFLAGS="$CFLAGS"
     ac_save_LIBS="$LIBS"
     CFLAGS="$CFLAGS $VORBIS_CFLAGS $OGG_CFLAGS"
-    LIBS="$LIBS $VORBIS_LIBS $OGG_LIBS"
+    LIBS="$LIBS $VORBIS_LIBS $VORBISENC_LIBS $OGG_LIBS"
 dnl
 dnl Now check if the installed Vorbis is sufficiently new.
 dnl
@@ -2012,11 +1898,23 @@ dnl
 #include <stdlib.h>
 #include <string.h>
 #include <vorbis/codec.h>
+#include <vorbis/vorbisenc.h>
 
 int main ()
 {
-  system("touch conf.vorbistest");
-  return 0;
+    vorbis_block 	vb;
+    vorbis_dsp_state	vd;
+    vorbis_info		vi;
+
+    vorbis_info_init (&vi);
+    vorbis_encode_init (&vi, 2, 44100, -1, 128000, -1);
+    vorbis_analysis_init (&vd, &vi);
+    vorbis_block_init (&vd, &vb);
+    /* this function was added in 1.0rc3, so this is what we're testing for */
+    vorbis_bitrate_addblock (&vb);
+
+    system("touch conf.vorbistest");
+    return 0;
 }
 
 ],, no_vorbis=yes,[echo $ac_n "cross compiling; assumed OK... $ac_c"])
@@ -2073,14 +1971,26 @@ int main ()
 dnl AM_PATH_LIBFLAC([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for libFLAC, and define LIBFLAC_CFLAGS and LIBFLAC_LIBS
 dnl
-AC_DEFUN(AM_PATH_LIBFLAC,
+AC_DEFUN([AM_PATH_LIBFLAC],
 [dnl 
 dnl Get the cflags and libraries
 dnl
-AC_ARG_WITH(libFLAC,[  --with-libFLAC=PFX   Prefix where libFLAC is installed (optional)], libFLAC_prefix="$withval", libFLAC_prefix="")
-AC_ARG_WITH(libFLAC-libraries,[  --with-libFLAC-libraries=DIR   Directory where libFLAC library is installed (optional)], libFLAC_libraries="$withval", libFLAC_libraries="")
-AC_ARG_WITH(libFLAC-includes,[  --with-libFLAC-includes=DIR   Directory where libFLAC header files are installed (optional)], libFLAC_includes="$withval", libFLAC_includes="")
-AC_ARG_ENABLE(libFLACtest, [  --disable-libFLACtest       Do not try to compile and run a test libFLAC program],, enable_libFLACtest=yes)
+AC_ARG_WITH(libFLAC,
+	    AS_HELP_STRING([--with-libFLAC=PFX],
+	    		   [Prefix where libFLAC is installed (optional)]),
+	    [libFLAC_prefix="$withval"], [libFLAC_prefix=""])
+AC_ARG_WITH(libFLAC-libraries,
+	    AS_HELP_STRING([--with-libFLAC-libraries=DIR],
+	    		   [Directory where libFLAC library is installed (optional)]),
+	    		   [libFLAC_libraries="$withval"], [libFLAC_libraries=""])
+AC_ARG_WITH(libFLAC-includes,
+	    AS_HELP_STRING([--with-libFLAC-includes=DIR],
+	    		   [Directory where libFLAC header files are installed (optional)]),
+	    		   [libFLAC_includes="$withval"], [libFLAC_includes=""])
+AC_ARG_ENABLE(libFLACtest,
+	      AS_HELP_STRING([--disable-libFLACtest],
+	      		     [Do not try to compile and run a test libFLAC program]),,
+	      		     [enable_libFLACtest=yes])
 
   if test "x$libFLAC_libraries" != "x" ; then
     LIBFLAC_LIBS="-L$libFLAC_libraries"
@@ -2178,14 +2088,26 @@ int main ()
 dnl AM_PATH_LIBOGGFLAC([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test for libOggFLAC, and define LIBOGGFLAC_CFLAGS and LIBOGGFLAC_LIBS
 dnl
-AC_DEFUN(AM_PATH_LIBOGGFLAC,
+AC_DEFUN([AM_PATH_LIBOGGFLAC],
 [dnl 
 dnl Get the cflags and libraries
 dnl
-AC_ARG_WITH(libOggFLAC,[  --with-libOggFLAC=PFX   Prefix where libOggFLAC is installed (optional)], libOggFLAC_prefix="$withval", libOggFLAC_prefix="")
-AC_ARG_WITH(libOggFLAC-libraries,[  --with-libOggFLAC-libraries=DIR   Directory where libOggFLAC library is installed (optional)], libOggFLAC_libraries="$withval", libOggFLAC_libraries="")
-AC_ARG_WITH(libOggFLAC-includes,[  --with-libOggFLAC-includes=DIR   Directory where libOggFLAC header files are installed (optional)], libOggFLAC_includes="$withval", libOggFLAC_includes="")
-AC_ARG_ENABLE(libOggFLACtest, [  --disable-libOggFLACtest       Do not try to compile and run a test libOggFLAC program],, enable_libOggFLACtest=yes)
+AC_ARG_WITH(libOggFLAC,
+	    AS_HELP_STRING([--with-libOggFLAC=PFX],
+	    		   [Prefix where libOggFLAC is installed (optional)]),
+	    [libOggFLAC_prefix="$withval"], [libOggFLAC_prefix=""])
+AC_ARG_WITH(libOggFLAC-libraries,
+	    AS_HELP_STRING([--with-libOggFLAC-libraries=DIR],
+	    		   [Directory where libOggFLAC library is installed (optional)]),
+	    [libOggFLAC_libraries="$withval"], [libOggFLAC_libraries=""])
+AC_ARG_WITH(libOggFLAC-includes,
+	    AS_HELP_STRING([--with-libOggFLAC-includes=DIR],
+	    		   [Directory where libOggFLAC header files are installed (optional)]),
+	    [libOggFLAC_includes="$withval"], [libOggFLAC_includes=""])
+AC_ARG_ENABLE(libOggFLACtest,
+	      AS_HELP_STRING([--disable-libOggFLACtest],
+	      		     [Do not try to compile and run a test libOggFLAC program]),,
+	      [enable_libOggFLACtest=yes])
 
   if test "x$libOggFLAC_libraries" != "x" ; then
     LIBOGGFLAC_LIBS="-L$libOggFLAC_libraries"
@@ -2284,12 +2206,14 @@ dnl AM_PATH_GTK_2_0([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [,
 dnl Test for GTK+, and define GTK_CFLAGS and GTK_LIBS, if gthread is specified in MODULES, 
 dnl pass to pkg-config
 dnl
-AC_DEFUN(AM_PATH_GTK_2_0,
+AC_DEFUN([AM_PATH_GTK_2_0],
 [dnl 
 dnl Get the cflags and libraries from pkg-config
 dnl
-AC_ARG_ENABLE(gtktest, [  --disable-gtktest       do not try to compile and run a test GTK+ program],
-		    , enable_gtktest=yes)
+AC_ARG_ENABLE(gtktest,
+	      AS_HELP_STRING([--disable-gtktest],
+	      		     [do not try to compile and run a test GTK+ program]),
+	      , [enable_gtktest=yes])
 
   pkg_config_args=gtk+-2.0
   for module in . $4
@@ -2480,16 +2404,22 @@ main ()
 dnl AM_PATH_GTK([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]]])
 dnl Test for GTK, and define GTK_CFLAGS and GTK_LIBS
 dnl
-AC_DEFUN(AM_PATH_GTK,
+AC_DEFUN([AM_PATH_GTK],
 [dnl 
 dnl Get the cflags and libraries from the gtk-config script
 dnl
-AC_ARG_WITH(gtk-prefix,[  --with-gtk-prefix=PFX   Prefix where GTK is installed (optional)],
-            gtk_config_prefix="$withval", gtk_config_prefix="")
-AC_ARG_WITH(gtk-exec-prefix,[  --with-gtk-exec-prefix=PFX Exec prefix where GTK is installed (optional)],
-            gtk_config_exec_prefix="$withval", gtk_config_exec_prefix="")
-AC_ARG_ENABLE(gtktest, [  --disable-gtktest       Do not try to compile and run a test GTK program],
-		    , enable_gtktest=yes)
+AC_ARG_WITH(gtk-prefix,
+	    AS_HELP_STRING([--with-gtk-prefix=PFX],
+	    		   [Prefix where GTK is installed (optional)]),
+            [gtk_config_prefix="$withval"], [gtk_config_prefix=""])
+AC_ARG_WITH(gtk-exec-prefix,
+	    AS_HELP_STRING([--with-gtk-exec-prefix=PFX],
+	    		   [Exec prefix where GTK is installed (optional)]),
+	    [gtk_config_exec_prefix="$withval"], [gtk_config_exec_prefix=""])
+AC_ARG_ENABLE(gtktest,
+	      AS_HELP_STRING([--disable-gtktest],
+	      		     [Do not try to compile and run a test GTK program]),
+	      , [enable_gtktest=yes])
 
   for module in . $4
   do

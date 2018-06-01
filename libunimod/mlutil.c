@@ -20,7 +20,7 @@
 
 /*==============================================================================
 
-  $Id: mlutil.c,v 1.12 1999/10/25 16:31:41 miod Exp $
+  $Id$
 
   Utility functions for the module loader
 
@@ -321,6 +321,7 @@ ULONG getAmigaPeriod (UBYTE flags, ULONG period)
   if (flags & UF_LINEAR)
     {
       period = lintab[period % 768] >> (period / 768);
+      if (period < 1) period = 1;
       period = (8363L * 1712L) / period;
     }
 
@@ -353,10 +354,10 @@ void S3MIT_CreateOrders(BOOL curious)
 /* handles S3M and IT effects */
 void S3MIT_ProcessCmd(UBYTE cmd,UBYTE inf,BOOL oldeffect)
 {
-	UBYTE hi,lo;
+	UBYTE lo;
 
 	lo=inf&0xf;
-	hi=inf>>4;
+	/* hi=inf>>4; */
 
 	/* process S3M / IT specific command structure */
 

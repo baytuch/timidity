@@ -24,6 +24,9 @@
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
 
+/* Define if you have ARTS sound server */
+#undef HAVE_ARTS
+
 /* Define to 1 if you have the <curses.h> header file. */
 #undef HAVE_CURSES_H
 
@@ -67,7 +70,7 @@
 /* Define to 1 if you have the <getopt.h> header file. */
 #undef HAVE_GETOPT_H
 
-/* Define to 1 if you have `getopt_long function' */
+/* Define to 1 if you have `getopt_long' function */
 #undef HAVE_GETOPT_LONG
 
 /* Define to 1 if you have the `getpagesize' function. */
@@ -112,8 +115,14 @@
 /* Define to 1 if you have the `X11' library (-lX11). */
 #undef HAVE_LIBX11
 
+/* Define to 1 if you have the 'Xft' library. */
+#undef HAVE_LIBXFT
+
 /* Define to 1 if you have the `xpg4' library (-lxpg4). */
 #undef HAVE_LIBXPG4
+
+/* Define to 1 if you have the `Xpm' library (-lXpm). */
+#undef HAVE_LIBXPM
 
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
@@ -135,6 +144,9 @@
 
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
+
+/* Define to 1 if you have the `mkstemp' function. */
+#undef HAVE_MKSTEMP
 
 /* Define to 1 if you have a working `mmap' system call. */
 #undef HAVE_MMAP
@@ -165,6 +177,9 @@
 
 /* Define to 1 if you have the <nlist.h> header file. */
 #undef HAVE_NLIST_H
+
+/* Define to 1 if you have `open_memstream' function */
+#undef HAVE_OPEN_MEMSTREAM
 
 /* Define to 1 if you have the `popen' function. */
 #undef HAVE_POPEN
@@ -202,9 +217,6 @@
 
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
-
-/* Define to 1 if stdbool.h conforms to C99. */
-#undef HAVE_STDBOOL_H
 
 /* Define to 1 if you have the <stddef.h> header file. */
 #undef HAVE_STDDEF_H
@@ -346,17 +358,20 @@
 /* Define to 1 if you have the <X11/Xmu/ExtAgent.h> header file. */
 #undef HAVE_X11_XMU_EXTAGENT_H
 
+/* Define to 1 if you have the <X11/Xaw3d/Tip.h> header file. */
+#undef HAVE_XAW3D_TIP
+
 /* Define to 1 if you have the `XmuRegisterExternalAgent' function. */
 #undef HAVE_XMUREGISTEREXTERNALAGENT
 
 /* Define to 1 if you have the `XShmCreatePixmap' function. */
 #undef HAVE_XSHMCREATEPIXMAP
 
-/* Define to 1 if the system has the type `_Bool'. */
-#undef HAVE__BOOL
-
 /* Define to 1 if you are NOT in debug mode */
 #undef NDEBUG
+
+/* Define to 1 if you use libneXtaw. */
+#undef NEXTAW
 
 /* Define to 1 if you do not have <string.h>. */
 #undef NO_STRING_H
@@ -435,8 +450,17 @@
 /* Define to 1 if you use PDcurses */
 #undef USE_PDCURSES
 
+/* A 'va_copy' style function */
+#undef VA_COPY
+
+/* 'va_lists' cannot be copies as values */
+#undef VA_COPY_AS_ARRAY
+
 /* Version number of package */
 #undef VERSION
+
+/* Define to 1 if you cpmpile windos driver. */
+#undef WINDRV
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
@@ -445,8 +469,14 @@
 /* Define to 1 if you need wrd support for X. */
 #undef WRDT_X
 
-/* Define to 1 if you have libXaw3d. */
+/* Define to 1 if you use libXaw3d. */
 #undef XAW3D
+
+/* Define to 1 if you use libXawPlus. */
+#undef XAWPLUS
+
+/* Define to 1 if you want xdnd support. */
+#undef XDND
 
 /* Define to 1 if the X Window System is missing or not being used. */
 #undef X_DISPLAY_MISSING
@@ -492,6 +522,3 @@
 /* Define to empty if the keyword `volatile' does not work. Warning: valid
    code using `volatile' can become incorrect without. Disable with care. */
 #undef volatile
-
-/* for VC */
-#undef vsnprintf

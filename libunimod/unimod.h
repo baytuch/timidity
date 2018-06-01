@@ -20,7 +20,7 @@
 
 /*==============================================================================
 
-  $Id: unimod.h,v 1.35 1999/10/25 16:31:41 miod Exp $
+  $Id$
 
   MikMod sound library include file
 
@@ -44,7 +44,16 @@ extern "C"
 
 #ifdef __W32__
 #define WIN32_LEAN_AND_MEAN
+#if defined(__POCC__) && defined(RC_NONE)
+#undef RC_NONE
+#endif
 #include <windows.h>
+#ifdef __POCC__
+#ifdef RC_NONE
+#undef RC_NONE
+#endif
+#define RC_NONE 0
+#endif
 #include <io.h>
 #elif defined(__OS2__)||defined(__EMX__)
 #define INCL_DOSSEMAPHORES

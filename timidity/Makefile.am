@@ -1,5 +1,5 @@
 # TiMidity++ -- MIDI to WAVE converter and player
-# Copyright (C) 1999-2002 Masanao Izumo <mo@goice.co.jp>
+# Copyright (C) 1999-2007 Masanao Izumo <iz@onicos.co.jp>
 # Copyright (C) 1995 Tuukka Toivonen <tt@cgs.fi>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 include $(top_srcdir)/common.makefile.in
 
@@ -58,6 +58,7 @@ timidity_SOURCES = \
 	mid.defs \
 	miditrace.c \
 	miditrace.h \
+	midi_a.c \
 	mix.c \
 	mix.h \
 	mod.c \
@@ -138,6 +139,7 @@ EXTRA_timidity_SOURCES = \
 	mfnode.h \
 	nas_a.c \
 	portaudio_a.c \
+	npipe_a.c \
 	sun_a.c \
 	vorbis_a.c \
 	flac_a.c \
@@ -177,6 +179,15 @@ else
 
 CLEANFILES = newton_table.c
 
+if DMC
+if ENABLE_W32GUI
+W32GUI_RES = $(top_builddir)\\interface\\w32g_res.res
+else
+if ENABLE_W32G_SYN
+W32GUI_RES = $(top_builddir)\\interface\\w32g_res.res
+endif
+endif
+else
 if ENABLE_W32GUI
 W32GUI_RES = $(top_builddir)/interface/w32g_res.res
 else
@@ -185,6 +196,7 @@ W32GUI_RES = $(top_builddir)/interface/w32g_res.res
 endif
 endif
 
+endif
 endif
 
 if VCPP
@@ -197,6 +209,23 @@ timidity_LDADD = \
 	$(top_builddir)/utils/utils.lib \
 	$(W32GUI_RES)
 
+timidity_dep = $(SYSEXTRAS:.c=.$(OBJEXT)) \
+	$(top_builddir)/interface/interface.lib \
+	$(top_builddir)/libarc/arc.lib \
+	$(top_builddir)/libunimod/unimod.lib \
+	$(top_builddir)/utils/utils.lib \
+	$(W32GUI_RES)
+
+else
+
+if POCC
+timidity_LDADD = \
+	$(SYSEXTRAS:.c=.$(OBJEXT)) \
+	$(top_builddir)/interface/interface.lib \
+	$(top_builddir)/libarc/arc.lib \
+	$(top_builddir)/libunimod/unimod.lib \
+	$(top_builddir)/utils/utils.lib \
+	$(W32GUI_RES)
 timidity_dep = $(SYSEXTRAS:.c=.$(OBJEXT)) \
 	$(top_builddir)/interface/interface.lib \
 	$(top_builddir)/libarc/arc.lib \
@@ -242,6 +271,22 @@ timidity_dep = $(SYSEXTRAS:.c=.$(OBJEXT)) \
 	$(top_builddir)/utils/utils.lib \
 	$(W32GUI_RES)
 else
+if DMC
+timidity_LDADD = \
+	$(SYSEXTRAS:.c=.$(OBJEXT)) \
+	$(top_builddir)\\interface\\interface.lib \
+	$(top_builddir)\\libarc\\arc.lib \
+	$(top_builddir)\\libunimod\\unimod.lib \
+	$(top_builddir)\\utils\\utils.lib \
+	$(W32GUI_RES)
+
+timidity_dep = $(SYSEXTRAS:.c=.$(OBJEXT)) \
+	$(top_builddir)/interface/interface.lib \
+	$(top_builddir)/libarc/arc.lib \
+	$(top_builddir)/libunimod/unimod.lib \
+	$(top_builddir)/utils/utils.lib \
+	$(W32GUI_RES)
+else
 timidity_LDADD = \
 	$(SYSEXTRAS:.c=.$(OBJEXT)) \
 	$(top_builddir)/interface/libinterface.a \
@@ -259,10 +304,16 @@ timidity_dep = $(SYSEXTRAS:.c=.$(OBJEXT)) \
 endif
 endif
 endif
+endif
+endif
 
 if VCPP
 
+if WINDRV
+VC_LINK = link.exe -lib
+else
 VC_LINK = link.exe
+endif
 VCC_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS)
 
 timidity$(EXEEXT): $(timidity_OBJECTS) $(timidity_DEPENDENCIES) $(timidity_dep) $(W32GUI_RES)
@@ -275,12 +326,43 @@ calcnewt$(EXEEXT): $(calcnewt_OBJECTS) $(calcnewt_DEPENDENCIES)
 
 else
 
-if BORLANDC
-BORLANDC_LINK = ilink32.exe -C -Gn
+if POCC
 
+if WINDRV
+POCC_LINK = polib.exe
+timidity$(EXEEXT): $(timidity_OBJECTS) $(timidity_DEPENDENCIES) $(timidity_dep) $(W32GUI_RES)
+	@rm -f timidity$(EXEEXT)
+	$(POCC_LINK) $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) -out:timidity.lib
+	touch timidity$(EXEEXT)
+	
+else
+POCC_LINK = polink.exe
+timidity$(EXEEXT): $(timidity_OBJECTS) $(timidity_DEPENDENCIES) $(timidity_dep) $(W32GUI_RES)
+	@rm -f timidity$(EXEEXT)
+	$(POCC_LINK) $(POCC_LDFLAGS) $(timidity_OBJECTS) $(timidity_LDADD) $(LIBS) -out:timidity.exe
+	
+endif
+
+POCCC_LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS)
+calcnewt$(EXEEXT): $(calcnewt_OBJECTS) $(calcnewt_DEPENDENCIES)
+	@rm -f calcnewt$(EXEEXT)
+	$(POCCC_LINK) $(calcnewt_LDFLAGS) $(calcnewt_OBJECTS) $(calcnewt_LDADD) $(LIBS)
+
+else
+
+if BORLANDC
+if WINDRV
+timidity$(EXEEXT): $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) $(timidity_dep) $(W32GUI_RES)
+	@rm -f $@
+	for foo in $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) ;do  \
+	  tlib $@ +$$foo ; \
+	done
+else
+BORLANDC_LINK = ilink32.exe -C -Gn
 timidity$(EXEEXT): $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) $(timidity_dep) $(W32GUI_RES)
 	@rm -f timidity$(EXEEXT)
 	$(BORLANDC_LINK) $(BORLANDC_LINK_OPTIONS) $(BORLANDC_START) $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)), $@, ,$(timidity_LDADD) $(BORLANDC_LDFLAGS) $(LIBS), ,$(W32GUI_RES)
+endif
 calcnewt.$(OBJEXT): calcnewt.c
 	$(CC)  -tWC  -c calcnewt.c
 calcnewt$(EXEEXT): $(calcnewt_OBJECTS) $(calcnewt_DEPENDENCIES)
@@ -291,19 +373,71 @@ else
 
 if WATCOM_C
 WATCOM_LINK = wlink.exe 
+if WINDRV
+timidity$(EXEEXT): $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) $(timidity_dep) $(W32GUI_RES)
+	@rm -f $@
+	for foo in $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) ;do  \
+	  wlib $@ +$$foo ; \
+	done
+else
 timidity$(EXEEXT): $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) $(timidity_dep) $(W32GUI_RES)
 	@rm -f timidity$(EXEEXT)
 	$(WATCOM_LINK) $(WATCOM_LDFLAGS) `for foo in $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)); do echo "File $$foo "; done;` Name $@ `for foo in  $(timidity_LDADD) $(LIBS); do echo "Library $$foo"; done;` $(WATCOM_LINK_OPTIONS)  `if test x$(W32GUI_RES) != x ; then  echo Option RESource=$(W32GUI_RES); fi;`
+endif
 calcnewt.$(OBJEXT): calcnewt.c
 	$(CCLD)  -c calcnewt.c
 calcnewt$(EXEEXT): $(calcnewt_OBJECTS) $(calcnewt_DEPENDENCIES)
 	@rm -f calcnewt$(EXEEXT)
 	$(WATCOM_LINK) File calcnewt.$(OBJEXT) Name $@
-endif
+else
+if DMC
+DMC_LINK = dmc.exe 
+if WINDRV
+timidity$(EXEEXT): $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) $(timidity_dep) $(W32GUI_RES)
+	@rm -f $@ $(@:.exe=.lib)
+	start lib -p128 -c  $(@:.exe=.lib) $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT))
+	if [ -f $(@:.exe=.lib) ] ;then touch $@ ;fi
 
+else
+timidity$(EXEEXT): $(timidity_OBJECTS) $(SYSEXTRAS:.c=.$(OBJEXT)) $(timidity_dep) $(W32GUI_RES)
+	@rm -f $@
+	$(CC) $(CFLAGS) $(DMC_LDFLAGS) $(timidity_OBJECTS) $(timidity_LDADD) $(LIBS) -output $@
+#	$(DMC_LINK) -WA $(DMC_LDFLAGS) $(timidity_OBJECTS) $(timidity_LDADD) $(LIBS) -output $@
 endif
-
+calcnewt.$(OBJEXT): calcnewt.c
+	$(CCLD)  -c calcnewt.c
+: $(calcnewt_OBJECTS) $(calcnewt_DEPENDENCIES)
+	@rm -f calcnewt$(EXEEXT)
+	$(DMC_LINK) calcnewt.$(OBJEXT) -output  $@
+else
+if MINGWGCC
+if WINDRV
+calcnewt$(EXEEXT): $(calcnewt_OBJECTS) $(calcnewt_DEPENDENCIES) 
+	@rm -f calcnewt$(EXEEXT)
+	$(LINK) $(calcnewt_LDFLAGS) $(calcnewt_OBJECTS) $(calcnewt_LDADD) $(LIBS)
+timidity$(EXEEXT): $(timidity_OBJECTS) $(timidity_DEPENDENCIES) 
+	@rm -f timidity$(EXEEXT)
+	ar -cru timidity.exe $(timidity_LDFLAGS) $(timidity_OBJECTS) $(timidity_LDADD) 
+else
+calcnewt$(EXEEXT): $(calcnewt_OBJECTS) $(calcnewt_DEPENDENCIES) 
+	@rm -f calcnewt$(EXEEXT)
+	$(LINK) $(calcnewt_LDFLAGS) $(calcnewt_OBJECTS) $(calcnewt_LDADD) $(LIBS)
+timidity$(EXEEXT): $(timidity_OBJECTS) $(timidity_DEPENDENCIES) 
+	@rm -f timidity$(EXEEXT)
+	$(LINK) $(timidity_LDFLAGS) $(timidity_OBJECTS) $(timidity_LDADD) $(LIBS)
 endif
+endif
+#     MINGWGCC
+endif
+#     DM
+endif
+#     WATCOM_C
+endif
+#     BORLANDC
+endif
+#     POCC
+endif
+#      VCPP
 
 version.$(OBJEXT): version.c ../configure
 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(CFLAGS) -c $(srcdir)/version.c
@@ -311,6 +445,11 @@ version.$(OBJEXT): version.c ../configure
 resample.c: newton_table.c
 
 if VCPP
+newton_table.c: calcnewt$(EXEEXT)
+	./calcnewt $@
+
+else
+if POCC
 newton_table.c: calcnewt$(EXEEXT)
 	./calcnewt $@
 
@@ -323,6 +462,7 @@ else
 newton_table.c: calcnewt$(EXEEXT)
 	./calcnewt > $@
 
+endif
 endif
 endif
 

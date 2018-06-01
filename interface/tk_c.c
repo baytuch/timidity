@@ -1,6 +1,6 @@
 /*
     TiMidity++ -- MIDI to WAVE converter and player
-    Copyright (C) 1999-2002 Masanao Izumo <mo@goice.co.jp>
+    Copyright (C) 1999-2004 Masanao Izumo <iz@onicos.co.jp>
     Copyright (C) 1995 Tuukka Toivonen <tt@cgs.fi>
 
     This program is free software; you can redistribute it and/or modify
@@ -15,22 +15,18 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+    The Tcl/Tk interface for Timidity
+    written by Takashi Iwai (iwai@dragon.mm.t.u-tokyo.ac.jp)
+
+    Most of the following codes are derived from both motif_ctl.c
+    and motif_pipe.c.  The communication between Tk program and
+    timidity is established by a pipe stream as in Motif interface.
+    On the contrast to motif, the stdin and stdout are assigned
+    as pipe i/o in Tk interface.
 */
 
-/*================================================================
- *
- * The Tcl/Tk interface for Timidity
- * written by Takashi Iwai (iwai@dragon.mm.t.u-tokyo.ac.jp)
- *
- * Most of the following codes are derived from both motif_ctl.c
- * and motif_pipe.c.  The communication between Tk program and
- * timidity is established by a pipe stream as in Motif interface.
- * On the contrast to motif, the stdin and stdout are assigned
- * as pipe i/o in Tk interface.
- *
- *================================================================*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -86,7 +82,7 @@ static int ctl_open(int using_stdin, int using_stdout);
 static void ctl_close(void);
 static int ctl_read(int32 *valp);
 static int cmsg(int type, int verbosity_level, char *fmt, ...);
-static void ctl_pass_playing_list(int number_of_files, char *list_of_files[]);
+static int ctl_pass_playing_list(int number_of_files, char *list_of_files[]);
 static int ctl_blocking_read(int32 *valp);
 static void ctl_note(int status, int ch, int note, int vel);
 static void ctl_event(CtlEvent *e);
@@ -146,12 +142,14 @@ typedef struct {
 ControlMode ctl=
 {
     "Tcl/Tk interface", 'k',
+    "tcltk",
     1,0,0,
     0,
     ctl_open,
     ctl_close,
     ctl_pass_playing_list,
     ctl_read,
+    NULL,
     cmsg,
     ctl_event
 };
@@ -587,7 +585,7 @@ static int ctl_read(int32 *valp)
 	return(ctl_blocking_read(valp));
 }
 
-static void ctl_pass_playing_list(int number_of_files, char *list_of_files[])
+static int ctl_pass_playing_list(int number_of_files, char *list_of_files[])
 {
 	int i=0;
 	char local[1000];
@@ -618,7 +616,7 @@ static void ctl_pass_playing_list(int number_of_files, char *list_of_files[])
 				/* if really QUIT */
 				k_pipe_gets(local, sizeof(local)-1);
 				if (*local == 'Z')
-					return;
+					return 0;
 				/* only stop playing..*/
 			}
 			if (command==RC_CHANGE_VOLUME) /* init volume */
@@ -646,6 +644,7 @@ static void ctl_pass_playing_list(int number_of_files, char *list_of_files[])
 			command = ctl_blocking_read(&val);
 		}
 	}
+	return 0;
 }
 
 
@@ -758,8 +757,8 @@ static void k_pipe_puts(char *str)
 	int len;
 	char lf = '\n';
 	len = line_strlen(str);
-	write(fpip_out, str, len);
-	write(fpip_out, &lf, 1);
+	ssize_t dummy = write(fpip_out, str, len);
+	dummy = write(fpip_out, &lf, 1);
 }
 
 
@@ -772,7 +771,8 @@ int k_pipe_gets(char *str, int maxlen)
 	/* at least 5 letters (4+\n) command */
 	len = 0;
 	for (p = str; len < maxlen - 1; p++) {
-		read(fpip_in, p, 1);
+		ssize_t dummy = read(fpip_in, p, 1);
+		dummy += 1;
 		if (*p == '\n')
 			break;
 		len++;

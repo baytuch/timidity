@@ -39,7 +39,13 @@
 #endif
 #include <windows.h>
 
+extern void *safe_malloc(size_t count);
+
 extern CRITICAL_SECTION critSect;
+
+static int opt_wmme_device_id = -2;
+
+UINT uDeviceID;
 
 /*****************************************************************************************************************************/
 
@@ -141,6 +147,8 @@ static void close_output    (void);
 static int  output_data     (char * Data, int32 Size);
 static int  acntl           (int request, void * arg);
 
+static void print_device_list(void);
+
 #if defined ( IA_W32GUI ) || defined ( IA_W32G_SYN )
 //#if defined ( IA_W32GUI )
 volatile int data_block_bits = DEFAULT_AUDIO_BUFFER_BITS;
@@ -149,6 +157,7 @@ volatile int data_block_num = 64;
 
 #define DATA_BLOCK_SIZE     (4 * AUDIO_BUFFER_SIZE)
 #define DATA_BLOCK_NUM      (dpm.extra_param[0])
+static int data_block_trunc_size;
 
 struct MMBuffer
 {
@@ -216,6 +225,17 @@ static int open_output(void)
     WAVEOUTCAPS     woc;
     MMRESULT        Result;
     UINT            DeviceID;
+	int ret;
+	
+	if( dpm.name != NULL)
+		ret = sscanf(dpm.name, "%d", &opt_wmme_device_id);
+	if ( dpm.name == NULL || ret == 0 || ret == EOF)
+		opt_wmme_device_id = -2;
+	
+	if (opt_wmme_device_id == -1){
+		print_device_list();
+		return -1;
+	}
 
     if (dpm.extra_param[0] < 8)
     {
@@ -249,21 +269,9 @@ static int open_output(void)
     wf.nSamplesPerSec = dpm.rate;
 
     i = dpm.rate;
-    j = 1;
-
-    if (!IsMono)
-    {
-        i *= 2;
-        j *= 2;
-    }
-
-	if (dpm.encoding & PE_24BIT) {
-		i *= 3;
-		j *= 3;
-	} else if (dpm.encoding & PE_16BIT) {
-        i *= 2;
-        j *= 2;
-    }
+    j = get_encoding_sample_size(dpm.encoding);
+    i *= j;
+    data_block_trunc_size = DATA_BLOCK_SIZE - (DATA_BLOCK_SIZE % j);
 
     wf.nAvgBytesPerSec = i;
     wf.nBlockAlign     = j;
@@ -280,12 +288,18 @@ static int open_output(void)
 
     { CHAR  b[256]; wsprintf(b, "Opening device...\n"); OutputDebugString(b); }
 
-    hDevice = 0;
+		hDevice = 0;
+
+	if (opt_wmme_device_id == -2){
+		uDeviceID = WAVE_MAPPER;
+    }else{
+    	uDeviceID= (UINT)opt_wmme_device_id;
+	}
 
     if (AllowSynchronousWaveforms)
-        Result = waveOutOpen(&hDevice, WAVE_MAPPER, (LPWAVEFORMATEX) &wf, (DWORD) OnPlaybackEvent, 0, CALLBACK_FUNCTION | WAVE_ALLOWSYNC);
+        Result = waveOutOpen(&hDevice, uDeviceID, (LPWAVEFORMATEX) &wf, (DWORD_PTR) OnPlaybackEvent, 0, CALLBACK_FUNCTION | WAVE_ALLOWSYNC);
     else
-        Result = waveOutOpen(&hDevice, WAVE_MAPPER, (LPWAVEFORMATEX) &wf, (DWORD) OnPlaybackEvent, 0, CALLBACK_FUNCTION);
+        Result = waveOutOpen(&hDevice, uDeviceID, (LPWAVEFORMATEX) &wf, (DWORD_PTR) OnPlaybackEvent, 0, CALLBACK_FUNCTION);
 
     if (Result)
     {
@@ -316,15 +330,7 @@ static int open_output(void)
 
 /** Calculate the buffer delay. **/
 
-    BufferDelay = AUDIO_BUFFER_SIZE;
-
-    if (NOT (dpm.encoding & PE_MONO))
-        BufferDelay *= 2;
-
-	if (dpm.encoding & PE_24BIT)
-		BufferDelay *= 3;
-    else if (dpm.encoding & PE_16BIT)
-        BufferDelay *= 2;
+    BufferDelay = AUDIO_BUFFER_SIZE * get_encoding_sample_size(dpm.encoding);
 
     BufferDelay = (BufferDelay * 1000) / dpm.rate;
 
@@ -424,10 +430,10 @@ static int output_data(char * Data, int32 Size)
             continue;
         }
 
-        if (s <= DATA_BLOCK_SIZE)
+        if (s <= data_block_trunc_size)
             n = s;
         else
-            n = DATA_BLOCK_SIZE;
+            n = data_block_trunc_size;
 
         CopyMemory(b->Data, d, n);
 
@@ -488,14 +494,8 @@ static int acntl(int request, void *arg)
     {
         case PM_REQ_GETQSIZ:
             *(int *)arg = (DATA_BLOCK_NUM-1) * AUDIO_BUFFER_SIZE;
+            *(int *)arg *= get_encoding_sample_size(dpm.encoding);
 
-            if (NOT (dpm.encoding & PE_MONO))
-                *(int *)arg *= 2;
-
-			if (dpm.encoding & PE_24BIT)
-                *(int *)arg *= 3;
-            else if (dpm.encoding & PE_16BIT)
-                *(int *)arg *= 2;
             return 0;
 
         case PM_REQ_DISCARD:
@@ -517,6 +517,10 @@ static int acntl(int request, void *arg)
 	    open_output();
             return 0;
         }
+
+        case PM_REQ_PLAY_START: /* Called just before playing */
+        case PM_REQ_PLAY_END: /* Called just after playing */
+    	    return 0;
     }
 
     return -1;
@@ -673,7 +677,7 @@ static struct MMBuffer * GetBuffer()
 
     if (FreeBuffers)
     {
-        b           = FreeBuffers;
+    	b           = (struct MMBuffer *)FreeBuffers;
         FreeBuffers = FreeBuffers->Next;
         NumBuffersInUse++;
 
@@ -704,7 +708,7 @@ static void PutBuffer(struct MMBuffer * b)
 {
     { CHAR  b[256]; wsprintf(b, "%2d: Putting buffer...\n", NumBuffersInUse); OutputDebugString(b); }
 
-    b->Next     = FreeBuffers;
+    b->Next     = (struct MMBuffer *)FreeBuffers;
     FreeBuffers = b;
     NumBuffersInUse--;
 
@@ -755,4 +759,30 @@ static void WaitForBuffer(int WaitForAllBuffers)
 
         { CHAR  b[256]; wsprintf(b, "%2d: Wait finished.\n", NumBuffersInUse); OutputDebugString(b); }
     }
+}
+
+/*****************************************************************************************************************************/
+
+#define DEVLIST_MAX 20
+static void print_device_list(void){
+	UINT num;
+	int i, list_num;
+	WAVEOUTCAPS woc;
+	typedef struct tag_DEVICELIST{
+		int  deviceID;
+		char name[256];
+	} DEVICELIST;
+	DEVICELIST device[DEVLIST_MAX];
+	num = waveOutGetNumDevs();
+	list_num=0;
+	for(i = 0 ; i < num  && i < DEVLIST_MAX ; i++){
+		if (MMSYSERR_NOERROR == waveOutGetDevCaps((UINT)i, &woc, sizeof(woc)) ){
+			device[list_num].deviceID=i;
+			strcpy(device[list_num].name, woc.szPname);
+			list_num++;
+		}
+	}
+	for(i=0;i<list_num;i++){
+		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%2d %s", device[i].deviceID, device[i].name);
+	}
 }

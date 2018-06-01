@@ -23,11 +23,11 @@
 
 #ifndef HAVE_VSNPRINTF
 #include <stdarg.h> /* for va_list */
-extern void vsnprintf(char *buff, size_t bufsiz, const char *fmt, va_list ap);
+extern int vsnprintf(char *buff, size_t bufsiz, const char *fmt, va_list ap);
 #endif
 
 #ifndef HAVE_SNPRINTF
-extern void snprintf(char *buff, size_t bufsiz, const char *fmt, ...);
+extern int snprintf(char *buff, size_t bufsiz, const char *fmt, ...);
 #endif /* HAVE_SNPRINTF */
 
 #ifndef HAVE_STRERROR
@@ -82,6 +82,8 @@ struct stat {
 };
 int stat(const char *filename, struct stat *st);
 #endif /* __W32__ */
+#else
+#include <sys/stat.h>
 #endif /* HAVE_SYS_STAT_H*/
 #endif /* ___SUPPORT_H_ */
 #ifndef S_ISDIR

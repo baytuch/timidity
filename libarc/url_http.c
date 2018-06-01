@@ -21,6 +21,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
+#ifdef __POCC__
+#include <sys/types.h>
+#endif /* for off_t */
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
@@ -100,7 +103,7 @@ URL url_http_open(char *name)
     int n;
 
 #ifdef DEBUG
-    printf("url_http_open(%s)\n", name);
+    fprintf(stderr, "url_http_open(%s)\n", name);
 #endif /* DEBUG */
 
     url = (URL_http *)alloc_url(sizeof(URL_http));
@@ -133,8 +136,15 @@ URL url_http_open(char *name)
 	p = name;
 	if(strncmp(p, "http://", 7) == 0)
 	    p += 7;
-	for(q = p; *q && *q != ':' && *q != '/'; q++)
-	    ;
+        if (p[0] == '[')
+        {
+            if (!(q = strchr(p, ']')))
+                return NULL;
+            *q = '\0';
+            ++p;
+        } else
+	    for(q = p; *q && *q != ':' && *q != '/'; q++)
+	        ;
 	len = q - p;
 	if(len >= sizeof(wwwserver) - 1) { /* What?? */
 	    strcpy(wwwserver, "localhost");
@@ -158,8 +168,18 @@ URL url_http_open(char *name)
 	memcpy(buff, name, n + 1);
 
 	host = buff;
-	for(p = host; *p && *p != ':' && *p != '/'; p++)
-	    ;
+
+        if (host[0] == '[')
+        {
+            if (!(p = strchr(host, ']')))
+                return NULL;
+            *p = '\0';
+            ++host;
+            ++p;
+        } else
+            for(p = host; *p && *p != ':' && *p != '/'; p++)
+                ;
+
 	if(*p == ':')
 	{
 	    char *pp;
@@ -184,7 +204,7 @@ URL url_http_open(char *name)
     }
 
 #ifdef DEBUG
-    printf("open(host=`%s', port=`%d')\n", host, port);
+    fprintf(stderr, "open(host=`%s', port=`%d')\n", host, port);
 #endif /* DEBUG */
 
 #ifdef __W32__
@@ -236,7 +256,7 @@ URL url_http_open(char *name)
     socket_write(fd, buff, (long)strlen(buff));
 
 #ifdef DEBUG
-    printf("HTTP<%s", buff);
+    fprintf(stderr, "HTTP<%s", buff);
 #endif /* DEBUG */
 
     if(url_user_agent)
@@ -244,7 +264,7 @@ URL url_http_open(char *name)
 	sprintf(buff, "User-Agent: %s\r\n", url_user_agent);
 	socket_write(fd, buff, (long)strlen(buff));
 #ifdef DEBUG
-	printf("HTTP<%s", buff);
+	fprintf(stderr, "HTTP<%s", buff);
 #endif /* DEBUG */
     }
 
@@ -252,7 +272,7 @@ URL url_http_open(char *name)
     sprintf(buff, "Host: %s\r\n", wwwserver);
     socket_write(fd, buff, (long)strlen(buff));
 #ifdef DEBUG
-    printf("HTTP<%s", buff);
+    fprintf(stderr, "HTTP<%s", buff);
 #endif /* DEBUG */
 
     /* End of header */
@@ -273,7 +293,7 @@ URL url_http_open(char *name)
     }
 
 #ifdef DEBUG
-    printf("HTTP>%s", buff);
+    fprintf(stderr, "HTTP>%s", buff);
 #endif /* DEBUG */
 
     p = buff;
@@ -292,7 +312,7 @@ URL url_http_open(char *name)
 	if(buff[0] == '\n' || (buff[0] == '\r' && buff[1] == '\n'))
 	    break; /* end of heaer */
 #ifdef DEBUG
-	printf("HTTP>%s", buff);
+	fprintf(stderr, "HTTP>%s", buff);
 #endif /* DEBUG */
     }
 

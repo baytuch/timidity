@@ -1,6 +1,6 @@
 /*
     TiMidity++ -- MIDI to WAVE converter and player
-    Copyright (C) 1999-2002 Masanao Izumo <mo@goice.co.jp>
+    Copyright (C) 1999-2004 Masanao Izumo <iz@onicos.co.jp>
     Copyright (C) 1995 Tuukka Toivonen <tt@cgs.fi>
 
     This program is free software; you can redistribute it and/or modify
@@ -15,11 +15,11 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
     emacs_c.c
     Emacs control mode - written by Masanao Izumo <mo@goice.co.jp>
-    */
+*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -78,7 +78,7 @@ static int ctl_open(int using_stdin, int using_stdout);
 static void ctl_close(void);
 static int ctl_read(int32 *valp);
 static int cmsg(int type, int verbosity_level, char *fmt, ...);
-static void ctl_pass_playing_list(int number_of_files, char *list_of_files[]);
+static int ctl_pass_playing_list(int number_of_files, char *list_of_files[]);
 static void ctl_event(CtlEvent *e);
 static int read_ready(void);
 static int emacs_type = 0; /* 0:emacs, 1:mule, 2:??
@@ -99,12 +99,14 @@ enum emacs_type_t
 ControlMode ctl=
 {
     "Emacs interface (invoked from `M-x timidity')", 'e',
+    "emacs",
     1, 0, 0,
     0,
     ctl_open,
     ctl_close,
     ctl_pass_playing_list,
     ctl_read,
+    NULL,
     cmsg,
     ctl_event
 };
@@ -249,7 +251,7 @@ static char *chomp(char *s)
     return s;
 }
 
-static void ctl_pass_playing_list(int argc, char *argv[])
+static int ctl_pass_playing_list(int argc, char *argv[])
 {
     int i;
     char cmd[BUFSIZ];
@@ -274,7 +276,7 @@ static void ctl_pass_playing_list(int argc, char *argv[])
     {
 	for(i = 1; i < argc; i++)
 	    play_midi_file(argv[i]);
-	return;
+	return 0;
     }
 
     /* Main Loop */
@@ -283,7 +285,7 @@ static void ctl_pass_playing_list(int argc, char *argv[])
 	int rc;
 
 	if(fgets(cmd, sizeof(cmd), stdin) == NULL)
-	    return; /* Emacs may down */
+	    return 0; /* Emacs may down */
 	chomp(cmd);
 	if(!strncmp(cmd, "PLAY", 4))
 	{
@@ -296,11 +298,11 @@ static void ctl_pass_playing_list(int argc, char *argv[])
 		ctl_refresh();
 		break;
 	      case RC_QUIT:
-		return;
+		return 0;
 	    } /* skipping others command */
 	}
 	else if(!strncmp(cmd, "QUIT", 4))
-	    return;
+	    return 0;
 	else
 	    continue; /* skipping unknown command */
     }

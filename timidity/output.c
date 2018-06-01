@@ -100,6 +100,10 @@ extern PlayMode portaudio_win_wmme_play_mode;
 #endif
 #endif /* AU_PORTAUDIO */
 
+#ifdef AU_NPIPE
+extern PlayMode npipe_play_mode;
+#endif /* AU_NPIPE */
+
 #ifdef AU_JACK
 extern PlayMode jack_play_mode;
 #endif /* AU_NAS */
@@ -130,20 +134,13 @@ extern PlayMode gogo_play_mode;
 #endif /* AU_GOGO */
 #endif /* !__MACOS__ */
 
+extern PlayMode midi_play_mode;
 extern PlayMode modmidi_play_mode;
 
 PlayMode *play_mode_list[] = {
-#ifdef DEV_PLAY_MODE
-  DEV_PLAY_MODE,
-#endif
-
-#ifdef AU_ALSA
-  &alsa_play_mode,
-#endif /* AU_ALSA */
-
-#ifdef AU_HPUX_ALIB
-  &hpux_nplay_mode,
-#endif /* AU_HPUX_ALIB */
+#if defined(AU_AO) /* Try libao first as that will give us pulseaudio */
+  &ao_play_mode,
+#endif /* AU_AO */
 
 #if defined(AU_ARTS)
   &arts_play_mode,
@@ -152,6 +149,18 @@ PlayMode *play_mode_list[] = {
 #if defined(AU_ESD)
   &esd_play_mode,
 #endif /* AU_ESD */
+
+#ifdef AU_ALSA /* Try alsa (aka DEV_PLAY_MODE 2 on Linux) first */
+  &alsa_play_mode,
+#endif /* AU_ALSA */
+
+#ifdef DEV_PLAY_MODE /* OS dependent direct hardware access, OSS on Linux */
+  DEV_PLAY_MODE,
+#endif
+
+#ifdef AU_HPUX_ALIB
+  &hpux_nplay_mode,
+#endif /* AU_HPUX_ALIB */
 
 #if defined(AU_PORTAUDIO)
 #ifndef AU_PORTAUDIO_DLL
@@ -163,6 +172,10 @@ PlayMode *play_mode_list[] = {
 #endif
 #endif /* AU_PORTAUDIO */
 
+#if defined(AU_NPIPE)
+  &npipe_play_mode,
+#endif /*AU_NPIPE*/
+
 #if defined(AU_JACK)
   &jack_play_mode,
 #endif /* AU_PORTAUDIO */
@@ -170,10 +183,6 @@ PlayMode *play_mode_list[] = {
 #if defined(AU_NAS)
   &nas_play_mode,
 #endif /* AU_NAS */
-
-#if defined(AU_AO)
-  &ao_play_mode,
-#endif /* AU_PORTAUDIO */
 
 #ifndef __MACOS__
   &wave_play_mode,
@@ -194,8 +203,9 @@ PlayMode *play_mode_list[] = {
 #endif /* AU_GOGO */
   &list_play_mode,
 #endif /* __MACOS__ */
+  &midi_play_mode,
   &modmidi_play_mode,
-  0
+  NULL
 };
 
 PlayMode *play_mode = NULL;
@@ -442,9 +452,7 @@ int32 general_output_convert(int32 *buf, int32 count)
 int validate_encoding(int enc, int include_enc, int exclude_enc)
 {
     const char *orig_enc_name, *enc_name;
-    int orig_enc;
 
-    orig_enc = enc;
     orig_enc_name = output_encoding_string(enc);
     enc |= include_enc;
     enc &= ~exclude_enc;
@@ -460,6 +468,22 @@ int validate_encoding(int enc, int include_enc, int exclude_enc)
 		  "Notice: Audio encoding is changed `%s' to `%s'",
 		  orig_enc_name, enc_name);
     return enc;
+}
+
+int32 apply_encoding(int32 old_enc, int32 new_enc)
+{
+	const int32 mutex_flags[] = {
+		PE_16BIT | PE_24BIT | PE_ULAW | PE_ALAW,
+		PE_BYTESWAP | PE_ULAW | PE_ALAW,
+		PE_SIGNED | PE_ULAW | PE_ALAW,
+	};
+	int i;
+
+	for (i = 0; i < sizeof mutex_flags / sizeof mutex_flags[0]; i++) {
+		if (new_enc & mutex_flags[i])
+			old_enc &= ~mutex_flags[i];
+	}
+	return old_enc | new_enc;
 }
 
 const char *output_encoding_string(int enc)
@@ -525,6 +549,17 @@ const char *output_encoding_string(int enc)
     /*NOTREACHED*/
 }
 
+int get_encoding_sample_size(int32 enc)
+{
+	int size = (enc & PE_MONO) ? 1 : 2;
+
+	if (enc & PE_24BIT)
+		size *= 3;
+	else if (enc & PE_16BIT)
+		size *= 2;
+	return size;
+}
+
 /* mode
   0,1: Default mode.
   2: Remove the directory path of input_filename, then add output_dir.
@@ -537,7 +572,7 @@ char *create_auto_output_name(const char *input_filename, char *ext_str, char *o
   int32 dir_len = 0;
   char ext_str_tmp[65];
 
-  output_filename = (char *)safe_malloc((output_dir?strlen(output_dir):0) + strlen(input_filename) + 6);
+  output_filename = (char *)safe_malloc((output_dir!=NULL?strlen(output_dir):0) + strlen(input_filename) + 6);
   if(output_filename==NULL)
     return NULL;
   output_filename[0] = '\0';
@@ -606,7 +641,7 @@ char *create_auto_output_name(const char *input_filename, char *ext_str, char *o
 	  *p = '_';
 
     if(mode==2){
-      char *p1,*p2,*p3;
+      char *p1,*p2;
 #ifndef __W32__
       p = strrchr(output_filename+dir_len,PATH_SEP);
 #else
@@ -617,6 +652,7 @@ char *create_auto_output_name(const char *input_filename, char *ext_str, char *o
 #endif
       p1 = STRRCHR(output_filename+dir_len,'/');
       p2 = STRRCHR(output_filename+dir_len,'\\');
+      char *p3;
       p3 = STRRCHR(output_filename+dir_len,':');
 #undef STRRCHR
       p1>p2 ? (p1>p3 ? (p = p1) : (p = p3)) : (p2>p3 ? (p = p2) : (p = p3));

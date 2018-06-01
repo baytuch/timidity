@@ -122,12 +122,13 @@ enum {
 
 typedef struct _CtlEvent {
     int type;		/* See above */
-    long v1, v2, v3, v4;/* Event value */
+    ptr_size_t v1, v2, v3, v4;/* Event value */
 } CtlEvent;
 
 
 typedef struct {
   char *id_name, id_character;
+  char *id_short_name;
   int verbosity, trace_playing, opened;
 
   int32 flags;
@@ -147,13 +148,16 @@ typedef struct {
 
   int  (*open)(int using_stdin, int using_stdout);
   void (*close)(void);
-  void (*pass_playing_list)(int number_of_files, char *list_of_files[]);
+  int (*pass_playing_list)(int number_of_files, char *list_of_files[]);
   int  (*read)(int32 *valp);
+  int  (*write)(char *buf, int32 size);
   int  (*cmsg)(int type, int verbosity_level, char *fmt, ...);
   void (*event)(CtlEvent *ev);	/* Control events */
 } ControlMode;
 
 extern ControlMode *ctl_list[], *ctl;
 extern int dumb_error_count;
+
+extern int std_write(int fd, const void *buffer, int size);
 
 #endif /* ___CONTROLS_H_ */

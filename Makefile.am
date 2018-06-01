@@ -27,6 +27,7 @@ SUBDIRS = \
 	libunimod \
 	interface \
 	timidity \
+	windrv \
 	doc \
 	script \
 	configs
@@ -36,8 +37,7 @@ EXTRA_DIST = \
 	ChangeLog.2 \
 	INSTALL.ja \
 	README.ja \
-	TiMidity-uj.ad.in \
-	TiMidity.ad.in
+	autogen.sh
 
 TOOLSDIR = timidity-tools
 UMPDIR = ump

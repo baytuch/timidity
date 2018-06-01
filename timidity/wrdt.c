@@ -118,13 +118,15 @@ WRDTracer *wrdt_list[] =
 #if defined(__W32__) && defined(IA_W32GUI)
 	&w32g_wrdt_mode,
 #endif /* __W32__ */
-#ifndef __MACOS__
+#if !defined(__MACOS__) && !defined(IA_W32GUI) && !defined(IA_W32G_SYN)
     &tty_wrdt_mode,
-#endif /* __MACOS__ */
+#endif /* __MACOS__  IA_W32GUI IA_W32G_SYN */
 #ifdef __MACOS__
     &mac_wrdt_mode,
 #endif
+#if !defined(IA_W32GUI) && !defined(IA_W32G_SYN)
     &dumb_wrdt_mode,
+#endif
     &null_wrdt_mode,
     0
 };
@@ -274,3 +276,44 @@ void wrd_sherry_event(int addr)
 	return;
     wrdt->sherry(datapacket[addr].data, datapacket[addr].len);
 }
+
+void free_wrd(void)
+{
+	delete_string_table(&path_list);
+}
+
+#ifdef __BORLANDC__
+void print_ecmd(char *cmd, int *args, int narg)
+{
+    char *p;
+    size_t s = MIN_MBLOCK_SIZE;
+
+    p = (char *)new_segment(&tmpbuffer, s);
+    snprintf(p, s, "^%s(", cmd);
+
+    if(*args == WRD_NOARG)
+	strncat(p, "*", s - strlen(p) - 1);
+    else {
+	char c[CHAR_BIT*sizeof(int)];
+	snprintf(c, sizeof(c)-1, "%d", args[0]);
+	strncat(p, c, s - strlen(p) - 1);
+    }
+    args++;
+    narg--;
+    while(narg > 0)
+    {
+	if(*args == WRD_NOARG)
+	    strncat(p, ",*", s - strlen(p) - 1);
+	else {
+	    char c[CHAR_BIT*sizeof(int)]; /* should be enough loong */
+	    snprintf(c, sizeof(c)-1, ",%d", args[0]);
+	    strncat(p, c, s - strlen(p) - 1);
+	}
+	args++;
+	narg--;
+    }
+    strncat(p, ")", s - strlen(p) - 1);
+    ctl->cmsg(CMSG_INFO, VERB_VERBOSE, "%s", p);
+    reuse_mblock(&tmpbuffer);
+}
+#endif

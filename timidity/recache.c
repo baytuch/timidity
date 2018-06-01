@@ -25,6 +25,9 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
+#ifdef __POCC__
+#include <sys/types.h>
+#endif //for off_t
 #include <stdio.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -56,7 +59,7 @@
 #define MAX_EXPANDLEN (1024 * 32)
 #define CACHE_DATA_LEN (allocate_cache_size / sizeof(sample_t))
 
-#define sp_hash(sp, note) ((unsigned int) (sp) + (unsigned int) (note))
+#define sp_hash(sp, note) ((unsigned long) (sp) + (unsigned int) (note))
 #define CACHE_RESAMPLING_OK 0
 #define CACHE_RESAMPLING_NOTOK 1
 #define SORT_THRESHOLD 20
@@ -81,6 +84,11 @@ static void qsort_cache_array(struct cache_hash **, long, long);
 static void insort_cache_array(struct cache_hash **, long);
 static int cache_resampling(struct cache_hash *);
 static void loop_connect(sample_t *, int32, int32);
+
+void free_cache_data(void) {
+	free(cache_data);
+	reuse_mblock(&hash_entry_pool);
+}
 
 void resamp_cache_reset(void)
 {

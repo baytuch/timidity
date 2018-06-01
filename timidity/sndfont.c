@@ -1,37 +1,39 @@
 /*
     TiMidity++ -- MIDI to WAVE converter and player
-    Copyright (C) 1999-2002 Masanao Izumo <mo@goice.co.jp>
+    Copyright (C) 1999-2005 Masanao Izumo <iz@onicos.co.jp>
     Copyright (C) 1995 Tuukka Toivonen <tt@cgs.fi>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+    This code from awesfx
+    Modified by Masanao Izumo <mo@goice.co.jp>
+
+    ================================================================
+    parsesf.c
+         parse SoundFont layers and convert it to AWE driver patch
+
+    Copyright (C) 1996,1997 Takashi Iwai
+    ================================================================
 */
-
-/* This code from awesfx
- * Modified by Masanao Izumo <mo@goice.co.jp>
- */
-
-/*================================================================
- * parsesf.c
- *	parse SoundFonr layers and convert it to AWE driver patch
- *
- * Copyright (C) 1996,1997 Takashi Iwai
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *================================================================*/
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif /* HAVE_CONFIG_H */
+#ifdef __POCC__
+#include <sys/types.h>
+#endif //for off_t
 #include <stdio.h>
 #ifndef NO_STRING_H
 #include <string.h>
@@ -54,7 +56,9 @@
 #include "sfitem.h"
 #include "output.h"
 #include "filter.h"
+#include "freq.h"
 #include "resample.h"
+#include "interface.h"
 
 #define FILENAME_NORMALIZE(fname) url_expand_home_dir(fname)
 #define FILENAME_REDUCED(fname)   url_unexpand_home_dir(fname)
@@ -66,11 +70,12 @@
  *----------------------------------------------------------------*/
 
 #ifdef CFG_FOR_SF
+#define SF_CLOSE_EACH_FILE 0
 #define SF_SUPPRESS_ENVELOPE
 #define SF_SUPPRESS_TREMOLO
 #define SF_SUPPRESS_VIBRATO
 #else
-#define SF_CLOSE_EACH_FILE
+#define SF_CLOSE_EACH_FILE 1
 /*#define SF_SUPPRESS_ENVELOPE*/
 /*#define SF_SUPPRESS_TREMOLO*/
 /*#define SF_SUPPRESS_VIBRATO*/
@@ -195,6 +200,7 @@ static void make_info(SFInfo *sf, SampleList *vp, LayerTable *tbl);
 static FLOAT_T calc_volume(LayerTable *tbl);
 static void set_sample_info(SFInfo *sf, SampleList *vp, LayerTable *tbl);
 static void set_init_info(SFInfo *sf, SampleList *vp, LayerTable *tbl);
+static void reset_last_sample_info(void);
 static int abscent_to_Hz(int abscents);
 static void set_rootkey(SFInfo *sf, SampleList *vp, LayerTable *tbl);
 static void set_rootfreq(SampleList *vp);
@@ -209,6 +215,7 @@ static void convert_vibrato(SampleList *vp, LayerTable *tbl);
 
 /*----------------------------------------------------------------*/
 
+int opt_sf_close_each_file = SF_CLOSE_EACH_FILE;
 static SFInsts *sfrecs = NULL;
 static SFInsts *current_sfrec = NULL;
 #define def_drum_inst 0
@@ -226,20 +233,29 @@ static SFInsts *find_soundfont(char *sf_file)
 
 static SFInsts *new_soundfont(char *sf_file)
 {
-    SFInsts *sf;
+	SFInsts *sf, *prev;
 
-    sf_file = FILENAME_NORMALIZE(sf_file);
-    for(sf = sfrecs; sf != NULL; sf = sf->next)
-	if(sf->fname == NULL)
-	    break;
-    if(sf == NULL)
-	sf = (SFInsts *)safe_malloc(sizeof(SFInsts));
-    memset(sf, 0, sizeof(SFInsts));
-    init_mblock(&sf->pool);
-    sf->fname = SFStrdup(sf, FILENAME_NORMALIZE(sf_file));
-    sf->def_order = DEFAULT_SOUNDFONT_ORDER;
-    sf->amptune = 1.0;
-    return sf;
+	sf_file = FILENAME_NORMALIZE(sf_file);
+	for(sf = sfrecs, prev = NULL; sf != NULL; prev = sf, sf = sf->next)
+	{
+		if(sf->fname == NULL)
+		{
+			/* remove the record from the chain to reuse */
+			if (prev != NULL)
+				prev->next = sf->next;
+			else if (sfrecs == sf)
+				sfrecs = sf->next;
+			break;
+		}
+	}
+	if(sf == NULL)
+		sf = (SFInsts *)safe_malloc(sizeof(SFInsts));
+	memset(sf, 0, sizeof(SFInsts));
+	init_mblock(&sf->pool);
+	sf->fname = SFStrdup(sf, FILENAME_NORMALIZE(sf_file));
+	sf->def_order = DEFAULT_SOUNDFONT_ORDER;
+	sf->amptune = 1.0;
+	return sf;
 }
 
 void add_soundfont(char *sf_file,
@@ -272,6 +288,21 @@ void remove_soundfont(char *sf_file)
 
     if((sf = find_soundfont(sf_file)) != NULL)
 	end_soundfont(sf);
+}
+
+void free_soundfonts()
+{
+	SFInsts *sf, *next;
+	
+	for (sf = sfrecs; sf != NULL; sf = next) {
+		if ((sf->tf != NULL) && (sf->tf->url != NULL))
+			free(sf->tf->url);
+		if (sf->tf != NULL)
+			free(sf->tf);
+		reuse_mblock(&sf->pool);
+		next = sf->next;
+		free(sf);
+	}
 }
 
 char *soundfont_preset_name(int bank, int preset, int keynote,
@@ -352,12 +383,14 @@ static void init_sf(SFInsts *rec)
 		(char *)SFStrdup(rec, sfinfo.preset[i].hdr.name);
 	free_soundfont(&sfinfo);
 
-#ifndef SF_CLOSE_EACH_FILE
-	if(!IS_URL_SEEK_SAFE(rec->tf->url))
-#endif
-	{
-	    close_file(rec->tf);
-	    rec->tf = NULL;
+	if (! opt_sf_close_each_file) {
+		if (! IS_URL_SEEK_SAFE(rec->tf->url)) {
+			close_file(rec->tf);
+			rec->tf = NULL;
+		}
+	} else {
+		close_file(rec->tf);
+		rec->tf = NULL;
 	}
 }
 
@@ -419,10 +452,9 @@ static Instrument *try_load_soundfont(SFInsts *rec, int order, int bank,
 			end_soundfont(rec);
 			return NULL;
 		}
-#ifndef SF_CLOSE_EACH_FILE
-		if(!IS_URL_SEEK_SAFE(rec->tf->url))
-		    rec->tf->url = url_cache_open(rec->tf->url, 1);
-#endif /* SF_CLOSE_EACH_FILE */
+		if (! opt_sf_close_each_file)
+			if (! IS_URL_SEEK_SAFE(rec->tf->url))
+				rec->tf->url = url_cache_open(rec->tf->url, 1);
 	}
 
 	addr = INSTHASH(bank, preset, keynote);
@@ -436,10 +468,10 @@ static Instrument *try_load_soundfont(SFInsts *rec, int order, int bank,
 	if (ip && ip->samples)
 		inst = load_from_file(rec, ip);
 
-#ifdef SF_CLOSE_EACH_FILE
-	close_file(rec->tf);
-	rec->tf = NULL;
-#endif
+	if (opt_sf_close_each_file) {
+		close_file(rec->tf);
+		rec->tf = NULL;
+	}
 
 	return inst;
 }
@@ -826,6 +858,8 @@ static int parse_layer(SFInfo *sf, int pridx, LayerTable *tbl, int level)
 	    (lay = inst->hdr.layer) == NULL)
 		return AWE_RET_SKIP;
 
+	reset_last_sample_info();
+
 	/* check global layer */
 	globalp = NULL;
 	if (is_global(lay)) {
@@ -850,6 +884,8 @@ static int parse_layer(SFInfo *sf, int pridx, LayerTable *tbl, int level)
 			rc = parse_layer(sf, pridx, &ctbl, level+1);
 			if (rc != AWE_RET_OK && rc != AWE_RET_SKIP)
 				return rc;
+
+			reset_last_sample_info();
 		} else {
 			init_and_merge_table(sf, &ctbl, tbl);
 			if (! sanity_range(&ctbl))
@@ -1014,7 +1050,7 @@ static int sanity_range(LayerTable *tbl)
  *----------------------------------------------------------------*/
 
 #ifdef CFG_FOR_SF
-int opt_reverb_control;	/* to avoid warning. */
+int opt_reverb_control, opt_surround_chorus;	/* to avoid warning. */
 static int cfg_for_sf_scan(char *name, int x_bank, int x_preset, int x_keynote_from, int x_keynote_to, int romflag);
 #endif
 
@@ -1232,10 +1268,17 @@ static void set_sample_info(SFInfo *sf, SampleList *vp, LayerTable *tbl)
 
     /* set data length */
     vp->v.data_length = vp->len + 1;
-    if (vp->v.loop_end > vp->len + 1)
-	vp->v.loop_end = vp->len + 1;
+
+	/* fix loop position */
+	if (vp->v.loop_end > vp->len + 1)
+		vp->v.loop_end = vp->len + 1;
 	if (vp->v.loop_start > vp->len)
-	vp->v.loop_start = vp->len;
+		vp->v.loop_start = vp->len;
+	if (vp->v.loop_start >= vp->v.loop_end)
+	{
+		vp->v.loop_start = vp->len;
+		vp->v.loop_end = vp->len + 1;
+	}
 
     /* Sample rate */
 	if(sp->samplerate > 50000) {sp->samplerate = 50000;}
@@ -1290,6 +1333,11 @@ static void set_sample_info(SFInfo *sf, SampleList *vp, LayerTable *tbl)
 /*----------------------------------------------------------------*/
 
 /* set global information */
+static int last_sample_type;
+static int last_sample_instrument;
+static int last_sample_keyrange;
+static SampleList *last_sample_list;
+
 static void set_init_info(SFInfo *sf, SampleList *vp, LayerTable *tbl)
 {
     int val;
@@ -1328,11 +1376,40 @@ static void set_init_info(SFInfo *sf, SampleList *vp, LayerTable *tbl)
 
 	vp->v.sample_type = sample->sampletype;
 	vp->v.sf_sample_index = tbl->val[SF_sampleId];
-	if (sample->sampletype == SF_SAMPLETYPE_MONO) {
-		vp->v.sf_sample_link = -1;
-	} else {
-		vp->v.sf_sample_link = sample->samplelink;
+	vp->v.sf_sample_link = sample->samplelink;
+
+	/* Some sf2 files don't contain valid sample links, so see if the
+	   previous sample was a matching Left / Right sample with the
+	   link missing and add it */
+	switch (sample->sampletype) {
+	case SF_SAMPLETYPE_LEFT:
+		if (vp->v.sf_sample_link == 0 &&
+		    last_sample_type == SF_SAMPLETYPE_RIGHT &&
+		    last_sample_instrument == tbl->val[SF_instrument] &&
+		    last_sample_keyrange == tbl->val[SF_keyRange]) {
+		    	/* The previous sample was a matching right sample
+		    	   set the link */
+		    	vp->v.sf_sample_link = last_sample_list->v.sf_sample_index;
+		}
+		break;
+	case SF_SAMPLETYPE_RIGHT:
+		if (last_sample_list &&
+		    last_sample_list->v.sf_sample_link == 0 &&
+		    last_sample_type == SF_SAMPLETYPE_LEFT &&
+		    last_sample_instrument == tbl->val[SF_instrument] &&
+		    last_sample_keyrange == tbl->val[SF_keyRange]) {
+		    	/* The previous sample was a matching left sample
+		    	   set the link on the previous sample*/
+		    	last_sample_list->v.sf_sample_link = tbl->val[SF_sampleId];
+		}
+		break;
 	}
+
+	/* Remember this sample in case the next one is a match */
+	last_sample_type = sample->sampletype;;
+	last_sample_instrument = tbl->val[SF_instrument];
+	last_sample_keyrange = tbl->val[SF_keyRange];
+	last_sample_list = vp;
 
 	/* panning position: 0 to 127 */
 	val = (int)tbl->val[SF_panEffectsSend];
@@ -1407,6 +1484,16 @@ static void set_init_info(SFInfo *sf, SampleList *vp, LayerTable *tbl)
     /* exclusive class key */
     vp->exclusiveClass = tbl->val[SF_keyExclusiveClass];
 #endif
+}
+
+static void reset_last_sample_info(void)
+{
+    last_sample_list = NULL;
+    last_sample_type = 0;
+    /* Set last instrument and keyrange to a value which cannot be represented
+       by LayerTable.val (which is a short) */
+    last_sample_instrument = 0x80000000;
+    last_sample_keyrange   = 0x80000000;
 }
 
 static int abscent_to_Hz(int abscents)
@@ -1617,7 +1704,9 @@ static void convert_vibrato(SampleList *vp, LayerTable *tbl)
 
 #include "freq.h"
 
+#ifndef CFG_FOR_SF_SUPPORT_FFT
 #define CFG_FOR_SF_SUPPORT_FFT	1
+#endif
 
 static FILE *x_out;
 static char x_sf_file_name[1024];
@@ -1822,6 +1911,7 @@ ControlMode w32gui_control_mode =
     ctl_close,
     dumb_pass_playing_list,
     ctl_read,
+    NULL,
     cmsg,
     ctl_event
 };
@@ -1893,7 +1983,7 @@ static void cfgforsf_usage(const char *program_name, int status)
 
 #if CFG_FOR_SF_SUPPORT_FFT
 int check_apply_control(void) { return 0; } // not pass
-void dumb_pass_playing_list(int number_of_files, char *list_of_files[]) {}
+int dumb_pass_playing_list(int number_of_files, char *list_of_files[]) {return 0;}
 void recompute_freq(int v) {} // not pass
 int32 control_ratio = 0;
 int reduce_quality_flag = 0;

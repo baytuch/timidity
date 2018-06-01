@@ -122,6 +122,7 @@ static void ctl_reset(void);
 static int ctl_open(int using_stdin, int using_stdout);
 static void ctl_close(void);
 static int ctl_read(int32 *valp);
+static int ctl_write(char *valp, int32 size);
 static int cmsg(int type, int verbosity_level, char *fmt, ...);
 static void ctl_event(CtlEvent *e);
 
@@ -133,12 +134,14 @@ static void ctl_event(CtlEvent *e);
 ControlMode ctl=
 {
     "vt100 interface", 'T',
+    "vt100",
     1,0,0,
     0,
     ctl_open,
     ctl_close,
     dumb_pass_playing_list,
     ctl_read,
+    ctl_write,
     cmsg,
     ctl_event
 };
@@ -745,6 +748,18 @@ static int ctl_read(int32 *valp)
 	    return RC_NONE;
 	}
     return RC_NONE;
+}
+
+static int ctl_write(char *valp, int32 size)
+{
+	static int warned = 0;
+	
+	if (!warned) {
+		fprintf(stderr, "Warning: using stdout with vt100 interface "
+				"will not\ngive the desired effect.\n");
+		warned = 1;
+	}
+	return write(STDOUT_FILENO, valp, size);
 }
 
 static int cmsg(int type, int verbosity_level, char *fmt, ...)

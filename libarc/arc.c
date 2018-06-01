@@ -723,11 +723,25 @@ URL url_arc_open(char *name)
 
     if((afl = find_arc_filelist(base)) == NULL)
 	afl = regist_archive(base);
+	reuse_mblock(&arc_buffer);	/* free `base' */
     if(afl == NULL)
 	return NULL;
-    reuse_mblock(&arc_buffer);	/* free `base' */
     name += len + 1;
-    while(name[0] == '/') name++;	/* skip '/'s right after # */
+    
+    /* skip path separators right after '#' */
+    for(;;)
+    {
+	if (*name != PATH_SEP
+		#if PATH_SEP != '/'	/* slash is always processed */
+			&& *name != '/'
+		#endif
+		#if defined(PATH_SEP2) && (PATH_SEP2 != '/')
+			&& *name != PATH_SEP2
+		#endif
+		)
+		break;
+	name++;
+    }
 
     for(entry = afl->entry_list; entry; entry = entry->next)
     {
