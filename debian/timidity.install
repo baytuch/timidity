@@ -1,6 +1,7 @@
 debian/timidity.cfg             etc/timidity
 debian/timidity.xpm             usr/share/pixmaps
 debian/TiMidity-uj_UTF8.ad      etc/X11/ja_JP.UTF-8/app-defaults/TiMidity
+debian/timidity.desktop         usr/share/applications
 interface/TiMidity.ad           etc/X11/app-defaults/TiMidity
 interface/TiMidity-uj.ad        etc/X11/ja_JP.eucJP/app-defaults/TiMidity
 usr/bin

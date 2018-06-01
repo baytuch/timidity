@@ -7,8 +7,8 @@ Terminal=false
 Type=Application
 Exec=/usr/bin/timidity -ia
 Categories=AudioVideo;Audio;Sequencer;
-X-AppInstall-Package=timidity-interfaces-extra
+X-AppInstall-Package=timidity
 X-AppInstall-Section=universe
 Icon=/usr/share/pixmaps/timidity.xpm
 MimeType=audio/midi;audio/x-mod;
-
+Keywords=midi;sequencer

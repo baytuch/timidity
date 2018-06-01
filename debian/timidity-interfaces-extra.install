@@ -1,3 +1,2 @@
-debian/timidity-interfaces-extra.desktop   usr/share/applications
 usr/lib/timidity/*tcl*
 usr/lib/timidity/if_*so
