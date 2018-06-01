@@ -23,7 +23,7 @@ Build-Depends:
  libxt-dev,
  tcl-dev,
  tk-dev,
-Standards-Version: 3.9.2
+Standards-Version: 4.1.4
 Homepage: http://timidity.sourceforge.net/
 Rules-Requires-Root: no
 Vcs-Git: https://salsa.debian.org/debian/timidity.git
