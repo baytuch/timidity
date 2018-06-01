@@ -39,7 +39,7 @@ test -d debian && {
 	[ "$1" == "updateexec" ] && {
 		echo Generating list of executable files...
 		rm -f debian/executable.files
-		find -type f -perm /111 ! -name '.*' -fprint debian/executable.files
+		find -type f -perm +111 ! -name '.*' -fprint debian/executable.files
 	}
 
 	# Remove any files in upstream tarball that we don't have in the Debian
