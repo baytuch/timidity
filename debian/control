@@ -94,7 +94,6 @@ Description: Emacs front end to Timidity++
  from Emacs with this package.
 
 Package: timidity-daemon
-Section: sound
 Architecture: all
 Depends:
  adduser,
