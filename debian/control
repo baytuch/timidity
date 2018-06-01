@@ -66,6 +66,7 @@ Package: timidity-interfaces-extra
 Architecture: any
 Depends:
  timidity (= ${binary:Version}),
+ wish,
  ${misc:Depends},
  ${shlibs:Depends},
 Replaces:
