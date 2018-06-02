@@ -96,6 +96,7 @@ Package: timidity-daemon
 Architecture: all
 Depends:
  adduser,
+ lsb-base,
  timidity (>= ${source:Version}),
  ${misc:Depends},
 Replaces:
