@@ -5,6 +5,7 @@
 536252.patch
 545476.patch
 compilation-fixes.patch
+cross.patch
 fixup_manpages.patch
 ldflags.patch
 spelling.patch
