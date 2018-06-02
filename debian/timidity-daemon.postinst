@@ -30,6 +30,7 @@ adduser --quiet \
             --system \
             --ingroup $SERVER_GROUP \
             --no-create-home \
+            --home $SERVER_HOME \
             --disabled-password \
             $SERVER_USER 2>/dev/null || true
 echo "..done"
