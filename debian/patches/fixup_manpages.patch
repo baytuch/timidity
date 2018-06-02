@@ -1,0 +1,40 @@
+Author: Reiner Herrmann <reiner@reiner-h.de>
+Description: Debian adaptions of manpages
+ - drop references to /usr/local
+ - link only to manpages available in Debian
+Forwarded: not-needed
+
+--- a/doc/C/timidity.1
++++ b/doc/C/timidity.1
+@@ -1081,8 +1081,7 @@
+ \fBTiMidity++\fP Debug
+ .RE
+ .SH SEE ALSO
+-lsmidiprog(1), mididump(1), patinfo(1), sf2text(1), wav2pat(1),
+-timidity.cfg(5)
++sf2text(1), timidity.cfg(5)
+ .SH COPYRIGHT
+ Copyright (C) 1999\-2004 Masanao Izumo <iz@onicos.co.jp>
+ .br
+--- a/doc/C/timidity.cfg.5
++++ b/doc/C/timidity.cfg.5
+@@ -471,8 +471,6 @@
+ .SH FILES
+ .TP
+ .B /etc/timidity.cfg
+-.TP
+-.B /usr/local/share/timidity/timidity.cfg
+ .SH SEE ALSO
+ timidity(1), lsmidiprog(1), mididump(1), patinfo(1), sf2text(1), wav2pat(1)
+ .SH COPYRIGHT
+--- a/doc/ja_JP.eucJP/timidity.cfg.5
++++ b/doc/ja_JP.eucJP/timidity.cfg.5
+@@ -466,8 +466,6 @@
+ .SH ファイル
+ .TP
+ .B /etc/timidity.cfg
+-.TP
+-.B /usr/local/share/timidity/timidity.cfg
+ .SH 関連項目
+ timidity(1), lsmidiprog(1), mididump(1), patinfo(1), sf2text(1), wav2pat(1)
+ .SH 著作権

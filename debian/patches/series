@@ -1,3 +1,11 @@
-tk86.patch
-debian-changes-2.13.2-36
+327042.patch
+335295.patch
+433643.patch
+440543.patch
+536252.patch
+545476.patch
+compilation-fixes.patch
+fixup_manpages.patch
+ldflags.patch
 spelling.patch
+tk86.patch

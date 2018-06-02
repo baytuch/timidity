@@ -1,0 +1,96 @@
+Author: Joost Yervante Damad <andete@debian.org>
+Description: several compilation fixes
+ applied in Debian revision 2.13.2-21
+
+--- a/timidity/vorbis_a.c
++++ b/timidity/vorbis_a.c
+@@ -475,8 +475,8 @@
+ 
+ 		/* write out pages (if any) */
+ 		while(ogg_stream_pageout(&os, &og) != 0) {
+-		  std_write(dpm.fd, og.header, og.header_len);
+-		  std_write(dpm.fd, og.body, og.body_len);
++		  ssize_t dummy = std_write(dpm.fd, og.header, og.header_len);
++		  dummy = std_write(dpm.fd, og.body, og.body_len);
+ 		}
+ 	}
+   }
+@@ -517,8 +517,8 @@
+       int result = ogg_stream_pageout(&os,&og);
+       if(result == 0)
+ 	break;
+-      std_write(dpm.fd, og.header, og.header_len);
+-      std_write(dpm.fd, og.body, og.body_len);
++      ssize_t dummy = std_write(dpm.fd, og.header, og.header_len);
++      dummy = std_write(dpm.fd, og.body, og.body_len);
+ 
+       /* this could be set above, but for illustrative purposes, I do
+ 	 it here (to show that vorbis does know where the stream ends) */
+--- a/timidity/sndfont.c
++++ b/timidity/sndfont.c
+@@ -60,6 +60,10 @@
+ #include "resample.h"
+ #include "interface.h"
+ 
++// use from freq.c
++float freq_fourier(Sample *sp, int *chord);
++int assign_pitch_to_freq(float freq);
++
+ #define FILENAME_NORMALIZE(fname) url_expand_home_dir(fname)
+ #define FILENAME_REDUCED(fname)   url_unexpand_home_dir(fname)
+ #define SFMalloc(rec, count)      new_segment(&(rec)->pool, count)
+--- a/timidity/wave_a.c
++++ b/timidity/wave_a.c
+@@ -285,7 +285,7 @@
+     }
+     lseek(dpm.fd, 40, SEEK_SET);
+     tmp = LE_LONG(bytes_output);
+-    std_write(dpm.fd, (char *)&tmp, 4);
++    ssize_t dummy = std_write(dpm.fd, (char *)&tmp, 4); ++dummy;
+ 
+     lseek(dpm.fd, save_point, SEEK_SET);
+     ctl->cmsg(CMSG_INFO, VERB_DEBUG,
+--- a/interface/x_wrdwindow.h
++++ b/interface/x_wrdwindow.h
+@@ -26,7 +26,7 @@
+ extern void WinEvent(void);
+ extern void EndWin(void);
+ extern void WinFlush(void);
+-extern void AddLine(const unsigned char *,int);
++extern void AddLine(const char *,int);
+ extern int OpenWRDWindow(char *opt);
+ extern void CloseWRDWindow(void);
+ extern void x_RedrawControl(int flag);
+--- a/interface/x_wrdwindow.c
++++ b/interface/x_wrdwindow.c
+@@ -1872,7 +1872,7 @@
+   }
+   return 0;
+ }
+-void AddLine(const unsigned char *str,int len)
++void AddLine(const char *str,int len)
+ {
+   Linbuf *ptr;
+   int i,j;
+--- a/interface/x_mag.c
++++ b/interface/x_mag.c
+@@ -187,7 +187,7 @@
+   magdata mg,*res;
+   struct magfilehdr mfh;
+   int len,c,header_pos;
+-  char *flaga=NULL,*flagb=NULL,*pixels=NULL;
++  unsigned char *flaga=NULL,*flagb=NULL,*pixels=NULL;
+   if((res=mag_search(file))){
+     return res;
+   }
+--- a/interface/Makefile.am
++++ b/interface/Makefile.am
+@@ -259,7 +259,7 @@
+ 
+ tclIndex: $(TCLSRCS)
+ 	rm -f tclIndex
+-	echo 'auto_mkindex . *.tcl; exit' | $(WISH)
++	echo "auto_mkindex . *.tcl" | tclsh
+ 
+ if ENABLE_TCLTK
+ install_tk = install.tk

@@ -1,0 +1,16 @@
+Author: Joost Yervante Damad <andete@debian.org>
+Description: don't url_unexpand_home_dir when opening a file
+Bug-Debian: https://bugs.debian.org/327042
+
+--- a/timidity/common.c
++++ b/timidity/common.c
+@@ -412,7 +412,8 @@
+ 		return 0;
+ 	}
+ 	/* First try the given name */
+-	strncpy(current_filename, url_unexpand_home_dir(name), 1023);
++	/* strncpy(current_filename, url_unexpand_home_dir(name), 1023); */
++	strncpy(current_filename, name, 1023);
+ 	current_filename[1023] = '\0';
+ 	if (noise_mode)
+ 		ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Trying to open %s",

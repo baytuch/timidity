@@ -1,0 +1,37 @@
+Author: Hans de Goede <hdegoede@redhat.com>
+Description: Don't crash when started in daemon mode
+Bug-Debian: https://bugs.debian.org/545476
+Bug-Fedora: https://bugzilla.redhat.com/show_bug.cgi?id=501051
+
+--- a/timidity/timidity.c
++++ b/timidity/timidity.c
+@@ -5380,6 +5370,29 @@
+ 	}
+     }
+ 
++    /* If we're going to fork for daemon mode, we need to fork now, as
++       certain output libraries (pulseaudio) become unhappy if initialized
++       before forking and then being used from the child. */
++    if (ctl->id_character == 'A' && (ctl->flags & CTLF_DAEMONIZE))
++    {
++	int pid = fork();
++	FILE *pidf;
++	switch (pid)
++	{
++	    case 0:		// child is the daemon
++		break;
++	    case -1:		// error status return
++		exit(7);
++	    default:		// no error, doing well
++		if ((pidf = fopen( "/var/run/timidity/timidity.pid", "w" )) != NULL )
++		{
++		    fprintf( pidf, "%d\n", pid );
++		    fclose( pidf );
++                }
++		exit(0);
++	}
++    }
++
+     if(play_mode == &null_play_mode)
+     {
+ 	char *output_id;
