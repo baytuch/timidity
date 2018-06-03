@@ -7,14 +7,14 @@ Build-Depends:
  libasound2-dev [linux-any],
  libaudio-dev,
  libaudiofile-dev,
- libflac-dev (>= 1.1.4),
+ libflac-dev,
  libgtk2.0-dev,
  libjack-dev,
  libncurses-dev,
  libpng-dev,
  libslang2-dev,
- libspeex-dev (>= 1.0),
- libvorbis-dev (>= 1.0.0-3),
+ libspeex-dev,
+ libvorbis-dev,
  libx11-dev,
  libxaw7-dev,
  libxext-dev,
@@ -32,7 +32,7 @@ Vcs-Browser: https://salsa.debian.org/debian/timidity
 Package: timidity
 Architecture: any
 Depends:
- lsb-base (>= 3.2-13),
+ lsb-base,
  ${misc:Depends},
  ${shlibs:Depends},
 Recommends:
@@ -69,8 +69,6 @@ Depends:
  wish,
  ${misc:Depends},
  ${shlibs:Depends},
-Replaces:
- timidity (<< 2.12.0),
 Description: TiMidity++ extra user interfaces
  TiMidity++ is a very high quality software-only MIDI sequencer and MOD
  player.
@@ -99,8 +97,6 @@ Depends:
  lsb-base,
  timidity (>= ${source:Version}),
  ${misc:Depends},
-Replaces:
- timidity (<< 2.13.2-31),
 Description: runs TiMidity++ as a system-wide MIDI sequencer
  TiMidity++ is a very high quality software-only MIDI sequencer and MOD
  player.
