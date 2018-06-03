@@ -118,7 +118,14 @@ Copyright: 1998 Luiz Otavio L. Zorzella
            1999 Eric Pouech
 License: LGPL-2.1+
 
-
+Files: libunimod/*.c
+       libunimod/*.h
+       timidity/mod.c
+Copyright: 1998-2000 Miodrag Vallat <miodrag@mikmod.darkorb.net>
+           Jean-Paul Mikkers (MikMak) <mikmak@via.nl>
+           Jake Stine (Air Richter) <dracoirs@epix.net>
+           Paolo Bonzini <bonzini@gnu.org>
+License: GPL-2+
 
 Files: debian/*
 Copyright: 1996 Klee Dienes <klee@debian.org>
