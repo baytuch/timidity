@@ -6,7 +6,6 @@ Build-Depends:
  debhelper (>= 11),
  libasound2-dev [linux-any],
  libaudio-dev,
- libaudiofile-dev,
  libflac-dev,
  libgtk2.0-dev,
  libjack-dev,

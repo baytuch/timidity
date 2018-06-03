@@ -15,6 +15,7 @@ timidity (2.14.0-1) UNRELEASED; urgency=low
     - timidity-daemon requires lsb-base for the init script
     - depend on wish for tcl scripts in timidity-interfaces-extra
     - drop ancient version restrictions and replace relations
+    - drop unused build dependency libaudiofile-dev (Closes: #857672)
   * debian/patches:
     - drop patches no longer needed or already applied upstream
     - fix spelling errors found by lintian.
