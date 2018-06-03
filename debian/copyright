@@ -1,33 +1,292 @@
-$Id: copyright,v 1.4 2003/12/27 13:31:44 hmh Exp $
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: TiMidity++
+Upstream-Contact: Masanao Izumo <iz@onicos.co.jp>
+Source: https://sourceforge.net/projects/timidity/files/TiMidity%2B%2B/
 
-This package was assembled by Henrique de Moraes Holschuh <hmh@debian.org>,
-based on previous work by Martin Mitchell <martin@debian.org>.
+Files: *
+Copyright: 1999-2007 Masanao Izumo <iz@onicos.co.jp>
+           1995 Tuukka Toivonen <tt@cgs.fi>
+License: GPL-2+
 
-The Debian packaging of TiMidity++ is:
-  Copyright (c) 2003 by Henrique de Moraes Holschuh <hmh@debian.org>,
-  Copyright (c) 2002 by Martin Mitchell <martin@debian.org>,
-  and distributed in the same license as the upstream source it applies to.
+Files: script/wcc386_w.sh
+Copyright: 2004 Keishi Suenaga <s_kesihi@mutt.freemail.ne.jp>
+License: GPL-2+
 
-Upstream sources are at: http://www.timidity.jp/
-Sourceforge project at:  http://timidity.sourceforge.net/
+Files: libarc/deflate.c
+Copyright: 1992-1993 Jean-loup Gailly
+License: GPL-1
 
-The changes were fairly minimal, and consisted of adding various
-debian/* files to the distribution, as well as minor changes to the
-configuration files.
+Files: interface/npsyn_c.c
+       interface/portmidisyn_c.c
+       interface/rtsyn.h
+       interface/rtsyn_common.c
+       interface/rtsyn_npipe.c
+       interface/rtsyn_portmidi.c
+       interface/rtsyn_winmm.c
+       interface/winsyn_c.c
+Copyright: 2002-2007 Keishi Suenaga <s_keishi@mutt.freemail.ne.jp>
+License: GPL-2+
 
-This package was formerly maintained by Klee Dienes <klee@debian.org>,
-and Martin Mitchell <martin@debian.org>.
+Files: interface/xaw_redef.c
+Copyright: 1987-1994 X Consortium
+           1987-1988 by Digital Equipment Corporation, Maynard, Massachusetts.
+           1991 OMRON Corporation
+License: X11 and DEC and OMRON
 
-Authors:
-  Tuukka Toivonen <tt@cgs.fi>, Masanao Izumo <mo@goice.co.jp> and others.
+Files: interface/xdnd.*
+Copyright: 2000-2004 the xine project
+License: GPL-2+
 
-Copyright:
-   Copyright (C) 1999-2002 Masanao Izumo <mo@goice.co.jp>
-   Copyright (C) 1995 Tuukka Toivonen <tt@cgs.fi>
+Files: interface/VTparse.h
+       interface/VTPrsTbl.c
+Copyright: 1987 Digital Equipment Corporation, Maynard, Massachusetts.
+License: DEC
 
-   This program is free software; you can redistribute it and/or modify it
-   under the terms of the GNU General Public License as published by the
-   Free Software Foundation; either version 2, or (at your option) any
-   later version.
+Files: interface/alsaseq_c.c
+       timidity/jack_a.c
+       timidity/sffile.*
+       timidity/sndfont.c
+       timidity/sbkconv.c
+       doc/C/README.alsaseq
+Copyright: 1996-2003 Takashi Iwai <tiwai@suse.de>
+License: GPL-2+
 
-The GPL may be found in /usr/share/common-licenses/GPL on a Debian system.
+Files: utils/fft4g.*
+Copyright: 1996-1999 Takuya OOURA
+License: FFT
+
+Files: utils/tmdy_getopt.h
+Copyright: 1989-1999 Free Software Foundation, Inc.
+License: GPL-2+
+
+Files: utils/support.c
+Copyright: 1999-2002 Masanao Izumo <mo@goice.co.jp>
+           1995 Tuukka Toivonen <tt@cgs.fi>
+           1998 Todd C. Miller <Todd.Miller@courtesan.com>
+License: GPL-2+ and OpenBSD
+
+Files: utils/nkflib.c
+Copyright: 1987 Fujitsu LTD. (Itaru ICHIKAWA)
+           1998 Shinji Kono, COW
+License: Fujitsu
+
+Files: utils/getaddrinfo.c
+Copyright: 2005 the VideoLAN team
+           2002-2007 Rémi Denis-Courmont
+License: GPL-2+
+
+Files: timidity/smplfile.c
+Copyright: 1999-2002 Masanao Izumo <mo@goice.co.jp>
+           1995 Tuukka Toivonen <tt@cgs.fi>
+           Kentaro Sato <kentaro@ranvis.com>
+           1989-1991 Ken Turkowski. <turk@computer.org>
+License: GPL-2+ and TURK
+
+Files: timidity/reverb.*
+Copyright: 1997-1999 Masaki Kiryu <mkiryu@usa.net>
+License: GPL-2+
+
+Files: timidity/mfi.c
+Copyright: Kentaro Sato <kentaro@ranvis.com>
+License: GPL-2+
+
+Files: timidity/hpux_d_a.c
+Copyright: 1997 Lawrence T. Hoff
+License: GPL-2+
+
+Files: timidity/nas_a.c
+Copyright: 1999 Michael Haardt <michael@moria.de>
+License: GPL-2+
+
+Files: timidity/mt19937ar.c
+Copyright: 1997-2002 Makoto Matsumoto
+           1997-2002 Takuji Nishimura
+License: BSD-3-clause
+
+Files: timidity/aiff_a.c
+Copyright: 1999-2002 Masanao Izumo <mo@goice.co.jp>
+           1995 Tuukka Toivonen <tt@cgs.fi>
+           1988-1991 Apple Computer, Inc.
+License: GPL-2+ and Apple
+
+Files: windrv/timiwp_timidity.h
+Copyright: 2005 Keishi Suenaga <s_keishi@mutt.freemail.ne.jp>
+License: GPL-2+
+
+Files: windrv/mmddk.h
+Copyright: 1998 Luiz Otavio L. Zorzella
+           1999 Eric Pouech
+License: LGPL-2.1+
+
+
+
+Files: debian/*
+Copyright: 1996 Klee Dienes <klee@debian.org>
+           1997-2002 Martin Mitchell <martin@debian.org>
+           2003-2005 Henrique de Moraes Holschuh <hmh@debian.org>
+           2007-2010 Joost Yervante Damad <andete@debian.org>
+           2018 Reiner Herrmann <reiner@reiner-h.de>
+License: GPL-2+
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the
+ Free Software Foundation; either version 2, or (at your option) any
+ later version.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+
+License: LGPL-2.1+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ .
+ On Debian systems, the complete text of the GNU Lesser General
+ Public License version 2 can be found in "/usr/share/common-licenses/LGPL-2.1".
+
+License: GPL-1
+ This is free software; you can redistribute it and/or modify it under the
+ terms of the GNU General Public License.
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License can be found in "/usr/share/common-licenses/GPL-1".
+
+License: X11
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ .
+ Except as contained in this notice, the name of the X Consortium shall not be
+ used in advertising or otherwise to promote the sale, use or other dealings
+ in this Software without prior written authorization from the X Consortium.
+
+License: DEC
+ All Rights Reserved
+ .
+ Permission to use, copy, modify, and distribute this software and its
+ documentation for any purpose and without fee is hereby granted,
+ provided that the above copyright notice appear in all copies and that
+ both that copyright notice and this permission notice appear in
+ supporting documentation, and that the name of Digital not be
+ used in advertising or publicity pertaining to distribution of the
+ software without specific, written prior permission.
+ .
+ DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+ DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+ ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ SOFTWARE.
+
+License: OMRON
+ Permission to use, copy, modify, distribute, and sell this software and its
+ documentation for any purpose is hereby granted without fee, provided that
+ the above copyright notice appear in all copies and that both that
+ copyright notice and this permission notice appear in supporting
+ documentation, and that the name of OMRON not be used in advertising or
+ publicity pertaining to distribution of the software without specific,
+ written prior permission.  OMRON makes no representations about the
+ suitability of this software for any purpose.  It is provided "as is"
+ without express or implied warranty.
+ .
+ OMRON DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+ OMRON BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+ ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+ WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTUOUS ACTION,
+ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+ SOFTWARE.
+
+License: FFT
+ You may use, copy, modify this code for any purpose and
+ without fee. You may distribute this ORIGINAL package.
+
+License: OpenBSD
+ Permission to use, copy, modify, and distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+License: Fujitsu
+ Everyone is permitted to do anything on this program
+ including copying, modifying, improving.
+ as long as you don't try to pretend that you wrote it.
+ i.e., the above copyright notice has to appear in all copies.
+ You don't have to ask before copying or publishing.
+ THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE.
+
+License: TURK
+ All rights reserved.
+ .
+ Even though I have reviewed this software, I make no warranty
+ or representation, either express or implied, with respect to this
+ software, its quality, accuracy, merchantability, or fitness for a
+ particular purpose.  As a result, this software is provided "as is,"
+ and you, its user, are assuming the entire risk as to its quality
+ and accuracy.
+ .
+ This code may be used and freely distributed as long as it includes
+ this copyright notice and the above warranty information.
+
+License: BSD-3-clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+ .
+   1. Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+ .
+   2. Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+ .
+   3. The names of its contributors may not be used to endorse or promote
+      products derived from this software without specific prior written
+      permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+License: Apple
+ Even though Apple has reviewed this software, Apple makes no warranty
+ or representation, either express or implied, with respect to this
+ software, its quality, accuracy, merchantability, or fitness for a
+ particular purpose.  As a result, this software is provided "as is,"
+ and you, its user, are assuming the entire risk as to its quality
+ and accuracy.
+ .
+ This code may be used and freely distributed as long as it includes
+ this copyright notice and the warranty information.
