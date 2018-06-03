@@ -1,3 +1,51 @@
+timidity (2.14.0-1) UNRELEASED; urgency=low
+
+  [ Reiner Herrmann ]
+  * QA upload.
+  * New upstream release. (Closes: #649274)
+    - fix clicking at beginning of output (Closes: #693011, LP: #1587215)
+  * Convert to dh-style build.
+    - register mime types again (Closes: #587187)
+  * Bump debhelper compat/dependency to 11.
+  * Update Standards-Version to 4.1.4.
+    - drop obsolete menu file
+  * debian/control:
+    - remove duplicated section
+    - change libaudio-dev B-D arch to linux-any (Closes: #634745)
+    - timidity-daemon requires lsb-base for the init script
+    - depend on wish for tcl scripts in timidity-interfaces-extra
+    - drop ancient version restrictions and replace relations
+  * debian/patches:
+    - drop patches no longer needed or already applied upstream
+    - fix spelling errors found by lintian.
+    - add patch to honour LDFLAGS while linking interface addons
+    - split up huge debian-changes-2.13.2-36 patch into smaller ones;
+      drop several hunks that have been applied upstream or are no longer
+      needed (like aRts- and autotools-related changes)
+  * Move .desktop file to timidity package and rename appropriately.
+    (Closes: #761472)
+  * Fix build failure with Tcl/Tk 8.6. (Closes: #728089)
+  * Allow opening files via .desktop file. (LP: #1072179)
+  * Recommend and configure fluid-soundfont-gm by default.
+    (Closes: #870429, #610266)
+  * Drop unneeded debian/*.dirs files.
+  * Rename lintian overrides to timidity.lintian-overrides.
+  * Add upstream metadata file.
+  * Set home directory of timidity system user during creation.
+  * Convert debian/copyright to machine-readable format.
+
+  [ Guillem Jover ]
+  * Fix LSB init output (Closes: #823083)
+
+  [ Frank Heckenbach ]
+  * Register .mod files with timidity in mime database. (Closes: #587187)
+
+  [ Helmut Grohne ]
+  * Don't assume availability of libOggFLAC for cross compilation.
+    (Closes: #885857)
+
+ -- Reiner Herrmann <reiner@reiner-h.de>  Sun, 03 Jun 2018 13:31:57 +0200
+
 timidity (2.13.2-41) unstable; urgency=medium
 
   * QA upload.
