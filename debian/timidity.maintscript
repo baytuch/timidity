@@ -1,0 +1,1 @@
+rm_conffile    /etc/default/timidity    2.14.0-1~    timidity-daemon

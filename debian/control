@@ -36,7 +36,7 @@ Depends:
  ${shlibs:Depends},
 Recommends:
  fluid-soundfont-gm,
- timidity-daemon,
+ timidity-daemon (>= 2.14.0-1),
 Suggests:
  fluid-soundfont-gs,
  freepats,
@@ -96,6 +96,8 @@ Depends:
  lsb-base,
  timidity (>= ${source:Version}),
  ${misc:Depends},
+Replaces: timidity (<< 2.14.0-1)
+Breaks: timidity (<< 2.14.0-1)
 Description: runs TiMidity++ as a system-wide MIDI sequencer
  TiMidity++ is a very high quality software-only MIDI sequencer and MOD
  player.

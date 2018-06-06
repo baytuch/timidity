@@ -34,6 +34,8 @@ timidity (2.14.0-1) UNRELEASED; urgency=low
   * Add upstream metadata file.
   * Set home directory of timidity system user during creation.
   * Convert debian/copyright to machine-readable format.
+  * Move /etc/default/timidity into timidity-daemon, as it is only
+    used by the init script provided there.
 
   [ Guillem Jover ]
   * Fix LSB init output (Closes: #823083)
