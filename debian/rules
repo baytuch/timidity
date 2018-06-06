@@ -28,6 +28,12 @@ override_dh_auto_configure:
 		--with-nas-library=/usr/lib/$(DEB_HOST_MULTIARCH)/libaudio.so \
 		--enable-audio=$(audio)
 
+override_dh_auto_install:
+	dh_auto_install
+	install -m644 -D interface/TiMidity.ad       debian/timidity/etc/X11/app-defaults/TiMidity
+	install -m644 -D interface/TiMidity-uj.ad    debian/timidity/etc/X11/ja_JP.eucJP/app-defaults/TiMidity
+	install -m644 -D debian/TiMidity-uj_UTF8.ad  debian/timidity/etc/X11/ja_JP.UTF-8/app-defaults/TiMidity
+
 override_dh_installman:
 	dh_installman --language=C doc/C/timidity.1 doc/C/timidity.cfg.5
 	dh_installman --language=ja doc/ja*/timidity.1 doc/ja*/timidity.cfg.5
