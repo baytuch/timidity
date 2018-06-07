@@ -61,8 +61,6 @@ PARAMS="${TIM_ALSASEQPARAMS} -iAD"
 
 START="--start --chuid ${SERVER_USER} --quiet --exec ${DAEMON} --pidfile ${PIDFILE} -- ${PARAMS}"
 
-set +e
-
 case "$1" in
   start)
 	#log_daemon_msg "Starting" "${NAME}"
