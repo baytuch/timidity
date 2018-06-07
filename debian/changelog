@@ -37,6 +37,8 @@ timidity (2.14.0-1) UNRELEASED; urgency=low
   * Move /etc/default/timidity into timidity-daemon, as it is only
     used by the init script provided there.
   * Drop mostly outdated debian/TODO file.
+  * Drop obsolete maintainer scripts that have no function or were (re)moving
+    long gone conffiles.
 
   [ Guillem Jover ]
   * Fix LSB init output (Closes: #823083)
