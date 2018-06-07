@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Debian QA Group <packages@qa.debian.org>
 Build-Depends:
  debhelper (>= 11),
+ dh-exec,
  libasound2-dev [linux-any],
  libaudio-dev,
  libflac-dev,
