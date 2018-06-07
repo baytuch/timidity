@@ -4,7 +4,7 @@ include /usr/share/dpkg/architecture.mk
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
-ifeq ($(DEB_BUILD_ARCH_OS), linux)
+ifeq ($(DEB_HOST_ARCH_OS), linux)
 audio = default,oss,nas,jack,vorbis,flac,speex,alsa
 interface = ncurses,emacs,xaw,alsaseq
 else
