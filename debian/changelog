@@ -1,4 +1,4 @@
-timidity (2.14.0-1) UNRELEASED; urgency=low
+timidity (2.14.0-1) unstable; urgency=low
 
   [ Reiner Herrmann ]
   * QA upload.
@@ -50,7 +50,7 @@ timidity (2.14.0-1) UNRELEASED; urgency=low
   * Don't assume availability of libOggFLAC for cross compilation.
     (Closes: #885857)
 
- -- Reiner Herrmann <reiner@reiner-h.de>  Sun, 03 Jun 2018 13:31:57 +0200
+ -- Reiner Herrmann <reiner@reiner-h.de>  Thu, 07 Jun 2018 21:42:56 +0200
 
 timidity (2.13.2-41) unstable; urgency=medium
 
