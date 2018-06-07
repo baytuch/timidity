@@ -13,7 +13,7 @@ Bug-Debian: https://bugs.debian.org/728089
  
  /* evaluate Tcl script */
 -static char *v_eval(char *fmt, ...)
-+void v_eval(char *fmt, ...)
++static void v_eval(char *fmt, ...)
  {
  	char buf[256];
  	va_list ap;
