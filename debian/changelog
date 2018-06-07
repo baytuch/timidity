@@ -36,6 +36,7 @@ timidity (2.14.0-1) UNRELEASED; urgency=low
   * Convert debian/copyright to machine-readable format.
   * Move /etc/default/timidity into timidity-daemon, as it is only
     used by the init script provided there.
+  * Drop mostly outdated debian/TODO file.
 
   [ Guillem Jover ]
   * Fix LSB init output (Closes: #823083)
