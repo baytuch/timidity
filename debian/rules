@@ -35,9 +35,9 @@ override_dh_installman:
 override_dh_installchangelogs:
 	dh_installchangelogs NEWS
 
-override_dh_fixperms:
+override_dh_fixperms-arch:
 	chmod a+x debian/timidity-interfaces-extra/usr/lib/timidity/tk*.tcl
-	dh_fixperms
+	dh_fixperms -a
 
 override_dh_installinit:
 	dh_installinit -ptimidity-daemon --name=timidity
