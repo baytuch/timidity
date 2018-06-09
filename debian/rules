@@ -29,8 +29,9 @@ override_dh_auto_configure:
 		--enable-audio=$(audio)
 
 override_dh_installman:
-	dh_installman --language=C doc/C/timidity.1 doc/C/timidity.cfg.5
-	dh_installman --language=ja doc/ja*/timidity.1 doc/ja*/timidity.cfg.5
+	dh_installman -ptimidity --language=C doc/C/timidity.1 doc/C/timidity.cfg.5
+	dh_installman -ptimidity --language=ja doc/ja*/timidity.1 doc/ja*/timidity.cfg.5
+	dh_installman --remaining-packages
 
 override_dh_installchangelogs:
 	dh_installchangelogs NEWS
