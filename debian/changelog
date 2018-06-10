@@ -1,3 +1,12 @@
+timidity (2.14.0-3) unstable; urgency=low
+
+  * QA upload.
+  * Install manpages only in timidity package. (Closes: #901141)
+  * Don't remove init.d conffile if it already belongs to timidity-daemon.
+    (Closes: #901129)
+
+ -- Reiner Herrmann <reiner@reiner-h.de>  Sun, 10 Jun 2018 11:10:53 +0200
+
 timidity (2.14.0-2) unstable; urgency=low
 
   * QA upload.
