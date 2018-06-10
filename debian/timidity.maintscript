@@ -1,2 +1,2 @@
 rm_conffile    /etc/default/timidity    2.14.0-1~    timidity-daemon
-rm_conffile    /etc/init.d/timidity     2.14.0-2~    timidity-daemon
+rm_conffile    /etc/init.d/timidity     2.14.0-3~
