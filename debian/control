@@ -57,11 +57,10 @@ Description: Software sound renderer (MIDI sequencer, MOD player)
    * Does MOD to MIDI conversion (including playback)
    * Outputs audio into various audio file formats: WAV, au, AIFF,
      Ogg (Vorbis, FLAC, Speex)
-   * Supports NAS, JACK, ALSA and AO drivers
+   * Supports JACK, ALSA and AO drivers
    * Uses Gravis Ultrasound compatible patch files and SoundFont2 patch
      files as the voice data for MIDI instruments
-   * Supports playing from archives (zip, lzh, tar...) and playing remote
-     data from the network
+   * Supports playing from archives (zip, lzh, tar...).
    * Timidity++ can be used as an ALSA sequencer device
 
 Package: timidity-interfaces-extra
