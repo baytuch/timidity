@@ -3,6 +3,7 @@ timidity (2.14.0-6) unstable; urgency=medium
   * Adopt package (Closes: #886347).
   * Disable for security reason network access and NAS.
     You could use libao if needed.
+  * Use git dpm
     
  -- Bastien Roucariès <rouca@debian.org>  Tue, 26 Jun 2018 22:20:50 +0200
 

@@ -29,6 +29,15 @@ override_dh_auto_configure:
 		--with-lispdir=/usr/share/emacs/site-lisp/timidity-el \
 		--enable-audio=$(audio)
 
+ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)))
+override_dh_auto_test:
+else
+override_dh_auto_test:
+        @echo '**********************************************************'
+        @echo 'Skip test suite                                           '
+        @echo '**********************************************************'
+endif
+
 override_dh_installman:
 	dh_installman -ptimidity --language=C doc/C/timidity.1 doc/C/timidity.cfg.5
 	dh_installman -ptimidity --language=ja doc/ja*/timidity.1 doc/ja*/timidity.cfg.5
