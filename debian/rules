@@ -31,6 +31,7 @@ override_dh_auto_configure:
 
 ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS) $(DEB_BUILD_PROFILES)))
 override_dh_auto_test:
+	timidity/timidity --verbose debian/test_sample.mid -Ov -o /dev/null
 else
 override_dh_auto_test:
         @echo '**********************************************************'
