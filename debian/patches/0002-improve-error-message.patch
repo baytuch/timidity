@@ -1,10 +1,18 @@
-Author: Joost Yervante Damad <andete@debian.org>
-Description: improve error message
-Bug-Debian: https://bugs.debian.org/335295
+From c03c01f36f65b7242d13da7d6cf4d6a025caa1a3 Mon Sep 17 00:00:00 2001
+From: Joost Yervante Damad <andete@debian.org>
+Date: Tue, 26 Jun 2018 22:31:16 +0200
+Subject: improve error message
 
+Bug-Debian: https://bugs.debian.org/335295
+---
+ timidity/timidity.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/timidity/timidity.c b/timidity/timidity.c
+index 4a4d601..9989635 100644
 --- a/timidity/timidity.c
 +++ b/timidity/timidity.c
-@@ -5886,11 +5899,11 @@
+@@ -5886,11 +5886,11 @@ int main(int argc, char **argv)
  				}
  			}
  			ctl->cmsg(CMSG_FATAL, VERB_NORMAL,

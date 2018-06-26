@@ -388,7 +388,7 @@ static int InitWin(char *opt)
     else
       shm_screen = NULL; /* No-support other format */
     if(!shm_screen)
-      ctl->cmsg(CMSG_WARNING, VERB_VERBOSE, "X SHM Extention is off");
+      ctl->cmsg(CMSG_WARNING, VERB_VERBOSE, "X SHM Extension is off");
 #else
     shm_screen = NULL;
 #endif
@@ -1872,7 +1872,7 @@ static int Parse(int c)
   }
   return 0;
 }
-void AddLine(const unsigned char *str,int len)
+void AddLine(const char *str,int len)
 {
   Linbuf *ptr;
   int i,j;
@@ -1996,7 +1996,7 @@ int OpenWRDWindow(char *opt)
     if(InitWin(opt) == -1)
     {
 	ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
-		  "WRD: Can't open WRD window becase of error");
+		  "WRD: Can't open WRD window because of error");
 	return -1;
     }
     XMapWindow(mywin.d, mywin.w);

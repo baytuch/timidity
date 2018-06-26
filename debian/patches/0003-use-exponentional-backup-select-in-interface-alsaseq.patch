@@ -1,10 +1,18 @@
-Author: "C. " <chunkeey@web.de>
-Description: use exponentional backup select in interface/alsaseq_c.c
-Bug-Debian: https://bugs.debian.org/433643
+From ed275658a6f56912cd1608fe3f4d5023afa54e19 Mon Sep 17 00:00:00 2001
+From: C <chunkeey@web.de>
+Date: Tue, 26 Jun 2018 22:31:17 +0200
+Subject: use exponentional backup select in interface/alsaseq_c.c
 
+Bug-Debian: https://bugs.debian.org/433643
+---
+ interface/alsaseq_c.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/interface/alsaseq_c.c b/interface/alsaseq_c.c
+index 876a62c..cf012db 100644
 --- a/interface/alsaseq_c.c
 +++ b/interface/alsaseq_c.c
-@@ -484,6 +484,7 @@
+@@ -484,6 +484,7 @@ static void stop_playing(void)
  
  static void doit(struct seq_context *ctxp)
  {
@@ -12,7 +20,7 @@ Bug-Debian: https://bugs.debian.org/433643
  	for (;;) {
  		while (snd_seq_event_input_pending(ctxp->handle, 1)) {
  			if (do_sequencer(ctxp))
-@@ -517,10 +518,20 @@
+@@ -517,10 +518,20 @@ static void doit(struct seq_context *ctxp)
  			FD_SET(ctxp->fd, &rfds);
  			if (! IS_STREAM_TRACE) {
  				struct timeval timeout;

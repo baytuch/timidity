@@ -1,0 +1,59 @@
+From 885d8aa140b010d790b20f490ceba16937992b5e Mon Sep 17 00:00:00 2001
+From: Reiner Herrmann <reiner@reiner-h.de>
+Date: Tue, 26 Jun 2018 22:31:25 +0200
+Subject: Fix spelling errors found by lintian
+
+---
+ doc/C/timidity.cfg.5    | 2 +-
+ interface/server_c.c    | 2 +-
+ interface/x_wrdwindow.c | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/doc/C/timidity.cfg.5 b/doc/C/timidity.cfg.5
+index c7a704c..bc84648 100644
+--- a/doc/C/timidity.cfg.5
++++ b/doc/C/timidity.cfg.5
+@@ -95,7 +95,7 @@ specifying any of the following to \fIMapID1\fP: \fBgm2\fP, \fBsc55\fP,
+ .BI "drumset " "[MapID2] number"
+ Selects the drum set to modify.  Patch mappings that follow will
+ affect this drum set.  You can indicate specific map as a target, by
+-specifying any ofthe following to \fIMapID2\fP: \fBgm2drum\fP,
++specifying any of the following to \fIMapID2\fP: \fBgm2drum\fP,
+ \fBsc55drum\fP, \fBsc88drum\fP, \fBsc88prodrum\fP, \fBsc8850drum\fP,
+ \fBxgdrum\fP and \fBxgsfx126\fP.
+ .TP
+diff --git a/interface/server_c.c b/interface/server_c.c
+index 1b8b483..abdcd2d 100644
+--- a/interface/server_c.c
++++ b/interface/server_c.c
+@@ -1509,7 +1509,7 @@ static int do_sequencer(void)
+ 	  default:
+ 	    ctl.cmsg(CMSG_ERROR, VERB_NORMAL,
+ 		     "Undefined data 0x%02x", data_buffer[offset - 1]);
+-	    send_status(401, "Wrong data is recieved (seqcmd=0x%02x)",
++	    send_status(401, "Wrong data is received (seqcmd=0x%02x)",
+ 			cmd);
+ 	    stop_playing();
+ 	    return 1;
+diff --git a/interface/x_wrdwindow.c b/interface/x_wrdwindow.c
+index 1906c55..f1361f6 100644
+--- a/interface/x_wrdwindow.c
++++ b/interface/x_wrdwindow.c
+@@ -388,7 +388,7 @@ static int InitWin(char *opt)
+     else
+       shm_screen = NULL; /* No-support other format */
+     if(!shm_screen)
+-      ctl->cmsg(CMSG_WARNING, VERB_VERBOSE, "X SHM Extention is off");
++      ctl->cmsg(CMSG_WARNING, VERB_VERBOSE, "X SHM Extension is off");
+ #else
+     shm_screen = NULL;
+ #endif
+@@ -1996,7 +1996,7 @@ int OpenWRDWindow(char *opt)
+     if(InitWin(opt) == -1)
+     {
+ 	ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
+-		  "WRD: Can't open WRD window becase of error");
++		  "WRD: Can't open WRD window because of error");
+ 	return -1;
+     }
+     XMapWindow(mywin.d, mywin.w);

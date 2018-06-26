@@ -1,11 +1,19 @@
-Author: Hans de Goede <hdegoede@redhat.com>
-Description: Don't crash when started in daemon mode
+From f4e7b8606defb2b5b65b80bb94dc32a26dcf5e08 Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Tue, 26 Jun 2018 22:31:20 +0200
+Subject: Don't crash when started in daemon mode
+
 Bug-Debian: https://bugs.debian.org/545476
 Bug-Fedora: https://bugzilla.redhat.com/show_bug.cgi?id=501051
+---
+ timidity/timidity.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
+diff --git a/timidity/timidity.c b/timidity/timidity.c
+index 9989635..7969929 100644
 --- a/timidity/timidity.c
 +++ b/timidity/timidity.c
-@@ -5380,6 +5370,29 @@
+@@ -5380,6 +5380,29 @@ MAIN_INTERFACE int timidity_post_load_configuration(void)
  	}
      }
  

@@ -1,14 +1,22 @@
-Author: Sergei Golovan <sgolovan@nes.ru>
-Description: Compatibility with TK8.6
+From f28c8b2d6bd5ba27d8284b0dc730ee5568fbd742 Mon Sep 17 00:00:00 2001
+From: Sergei Golovan <sgolovan@nes.ru>
+Date: Tue, 26 Jun 2018 22:31:26 +0200
+Subject: Compatibility with TK8.6
+
  interp->result has been deprecated for a while and is no
  longer available in TK8.6.
  The return value can be removed as it is never evaluated
  anyway.
 Bug-Debian: https://bugs.debian.org/728089
+---
+ interface/tk_c.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
+diff --git a/interface/tk_c.c b/interface/tk_c.c
+index c5c9074..44ff3e4 100644
 --- a/interface/tk_c.c
 +++ b/interface/tk_c.c
-@@ -905,7 +905,7 @@
+@@ -905,7 +905,7 @@ static int ExitAll(ClientData clientData, Tcl_Interp *interp,
  }
  
  /* evaluate Tcl script */
@@ -17,7 +25,7 @@ Bug-Debian: https://bugs.debian.org/728089
  {
  	char buf[256];
  	va_list ap;
-@@ -913,7 +913,6 @@
+@@ -913,7 +913,6 @@ static char *v_eval(char *fmt, ...)
  	vsnprintf(buf, sizeof(buf), fmt, ap);
  	Tcl_Eval(my_interp, buf);
  	va_end(ap);

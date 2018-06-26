@@ -5380,6 +5380,29 @@ MAIN_INTERFACE int timidity_post_load_configuration(void)
 	}
     }
 
+    /* If we're going to fork for daemon mode, we need to fork now, as
+       certain output libraries (pulseaudio) become unhappy if initialized
+       before forking and then being used from the child. */
+    if (ctl->id_character == 'A' && (ctl->flags & CTLF_DAEMONIZE))
+    {
+	int pid = fork();
+	FILE *pidf;
+	switch (pid)
+	{
+	    case 0:		// child is the daemon
+		break;
+	    case -1:		// error status return
+		exit(7);
+	    default:		// no error, doing well
+		if ((pidf = fopen( "/var/run/timidity/timidity.pid", "w" )) != NULL )
+		{
+		    fprintf( pidf, "%d\n", pid );
+		    fclose( pidf );
+                }
+		exit(0);
+	}
+    }
+
     if(play_mode == &null_play_mode)
     {
 	char *output_id;
@@ -5886,11 +5909,11 @@ int main(int argc, char **argv)
 				}
 			}
 			ctl->cmsg(CMSG_FATAL, VERB_NORMAL,
-					"%s: Can't read any configuration file.\n"
+					"%s: Error reading configuration file.\n"
 					"Please check %s or %s", program_name, config1, config2);
 #else
 			ctl->cmsg(CMSG_FATAL, VERB_NORMAL,
-					"%s: Can't read any configuration file.\n"
+					"%s: Error reading configuration file.\n"
 					"Please check " CONFIG_FILE, program_name);
 #endif /* __W32__ */
 		} else

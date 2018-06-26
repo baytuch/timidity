@@ -1,0 +1,23 @@
+From 490adc0361172785f57a21f66b44504cafbb960a Mon Sep 17 00:00:00 2001
+From: Steve Graham <bugs@annaghvarn.plus.com>
+Date: Tue, 26 Jun 2018 22:31:19 +0200
+Subject: fix drum panning
+
+Bug-Debian: https://bugs.debian.org/536252
+---
+ timidity/instrum.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/timidity/instrum.c b/timidity/instrum.c
+index c250190..cbd47e2 100644
+--- a/timidity/instrum.c
++++ b/timidity/instrum.c
+@@ -1075,7 +1075,7 @@ Instrument *load_instrument(int dr, int b, int prog)
+ 		}
+ 		/* panning */
+ 		if (ip != NULL && bank->tone[prog].pan != -1) {
+-			pan = ((int) bank->tone[prog].pan & 0x7f) - 64;
++			pan = ((int) bank->tone[prog].pan & 0x7f); /* - 64 */;
+ 			for (i = 0; i < ip->samples; i++) {
+ 				panning = (int) ip->sample[i].panning + pan;
+ 				panning = (panning < 0) ? 0

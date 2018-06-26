@@ -1,0 +1,25 @@
+From e261da8c8f8f47479380426ba459602d1ed97c2e Mon Sep 17 00:00:00 2001
+From: Joost Yervante Damad <andete@debian.org>
+Date: Tue, 26 Jun 2018 22:31:18 +0200
+Subject: Fix off-by-one crash error in panning reverb
+
+Bug-Debian: https://bugs.debian.org/440543
+---
+ timidity/reverb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/timidity/reverb.c b/timidity/reverb.c
+index 2d3ac4d..25d1cf0 100644
+--- a/timidity/reverb.c
++++ b/timidity/reverb.c
+@@ -1640,8 +1640,8 @@ static void do_ch_reverb_panning_delay(int32 *buf, int32 count, InfoDelay3 *info
+ 		buf[i] += r;
+ 		buf[++i] += l;
+ 
+-		if (++index0 == buf_size) {index0 = 0;}
+-		if (++buf_index == buf_size) {buf_index = 0;}
++		if (index0++ == buf_size) {index0 = 0;}
++		if (buf_index++ == buf_size) {buf_index = 0;}
+ 	}
+ 	memset(reverb_effect_buffer, 0, sizeof(int32) * count);
+ 	info->index[0] = index0;
