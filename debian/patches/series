@@ -10,3 +10,5 @@ fixup_manpages.patch
 ldflags.patch
 spelling.patch
 tk86.patch
+CVE-2017-11546.patch
+CVE-2017-11547.patch
