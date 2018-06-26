@@ -1,12 +1,11 @@
 Source: timidity
 Section: sound
 Priority: optional
-Maintainer: Debian QA Group <packages@qa.debian.org>
+Maintainer: Bastien Roucariès <rouca@debian.org>
 Build-Depends:
  debhelper (>= 11),
  dh-exec,
  libasound2-dev [linux-any],
- libaudio-dev,
  libflac-dev,
  libgtk2.0-dev,
  libjack-dev,
