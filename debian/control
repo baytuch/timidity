@@ -10,6 +10,7 @@ Build-Depends:
  libflac-dev,
  libgtk2.0-dev,
  libjack-dev,
+ libao-dev,
  libncurses-dev,
  libpng-dev,
  libslang2-dev,
@@ -42,6 +43,7 @@ Suggests:
  freepats,
  pmidi,
  timidity-daemon (>= 2.14.0-1),
+Breaks: timidity-daemon (>= 2.14.0-1~),
 Description: Software sound renderer (MIDI sequencer, MOD player)
  TiMidity++ is a very high quality software-only MIDI sequencer and MOD player.
  It uses sound fonts (GUS-compatible or SF2-compatible) to render MIDI files,
@@ -55,7 +57,7 @@ Description: Software sound renderer (MIDI sequencer, MOD player)
    * Does MOD to MIDI conversion (including playback)
    * Outputs audio into various audio file formats: WAV, au, AIFF,
      Ogg (Vorbis, FLAC, Speex)
-   * Supports NAS, eSound, JACK, ALSA and OSS drivers
+   * Supports NAS, JACK, ALSA and AO drivers
    * Uses Gravis Ultrasound compatible patch files and SoundFont2 patch
      files as the voice data for MIDI instruments
    * Supports playing from archives (zip, lzh, tar...) and playing remote
@@ -97,11 +99,14 @@ Depends:
  lsb-base,
  timidity (>= ${source:Version}),
  ${misc:Depends},
-Replaces: timidity (<< 2.14.0-1)
-Breaks: timidity (<< 2.14.0-1)
+Replaces: timidity (<< 2.14.0-1~)
+Breaks: timidity (<< 2.14.0-1~)
 Description: runs TiMidity++ as a system-wide MIDI sequencer
  TiMidity++ is a very high quality software-only MIDI sequencer and MOD
  player.
+ .
+ This package is not needed for a desktop install and output by default
+ using the ALSA driver.
  .
  This package provides TiMidity++ as a system-wide MIDI sequencer.
 

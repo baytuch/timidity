@@ -4,11 +4,12 @@ include /usr/share/dpkg/architecture.mk
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
 
+defaultaudio=ao
 ifeq ($(DEB_HOST_ARCH_OS), linux)
-audio = default,oss,nas,jack,vorbis,flac,speex,alsa
+audio = default,ao,nas,jack,vorbis,flac,speex,alsa
 interface = ncurses,emacs,xaw,alsaseq
 else
-audio = default,oss,nas,jack,vorbis,flac,speex
+audio = default,ao,nas,jack,vorbis,flac,speex
 interface = ncurses,emacs,xaw
 endif
 
@@ -22,7 +23,7 @@ override_dh_auto_configure:
 		--enable-dynamic=slang,tcltk,vt100,xskin,gtk \
 		--enable-server --enable-network --enable-spectrogram --enable-wrd \
 		--with-x \
-		--with-default-output=default \
+		--with-default-output=$(defaultaudio) \
 		--with-tcl-includes=/usr/include/tcl \
 		--with-lispdir=/usr/share/emacs/site-lisp/timidity-el \
 		--with-nas-library=/usr/lib/$(DEB_HOST_MULTIARCH)/libaudio.so \
