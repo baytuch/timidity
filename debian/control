@@ -37,11 +37,11 @@ Depends:
  ${shlibs:Depends},
 Recommends:
  fluid-soundfont-gm,
- timidity-daemon (>= 2.14.0-1),
 Suggests:
  fluid-soundfont-gs,
  freepats,
  pmidi,
+ timidity-daemon (>= 2.14.0-1),
 Description: Software sound renderer (MIDI sequencer, MOD player)
  TiMidity++ is a very high quality software-only MIDI sequencer and MOD player.
  It uses sound fonts (GUS-compatible or SF2-compatible) to render MIDI files,
@@ -104,3 +104,4 @@ Description: runs TiMidity++ as a system-wide MIDI sequencer
  player.
  .
  This package provides TiMidity++ as a system-wide MIDI sequencer.
+

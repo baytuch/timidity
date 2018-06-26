@@ -1,3 +1,13 @@
+timidity (2.14.0-4) unstable; urgency=high
+
+  * QA upload
+  * Suggest only daemon that is pulled by kde, breaking audio output.
+    (Closes: #901148, #901931).
+  * Bug fix: "CVE-2017-11546 CVE-2017-11547", thanks to
+    Salvatore Bonaccorso (Closes: #870338).
+
+ -- Bastien Roucariès <bastien@portable-bastien-2018.roucaries.eu>  Tue, 26 Jun 2018 11:01:52 +0200
+
 timidity (2.14.0-3) unstable; urgency=low
 
   * QA upload.
