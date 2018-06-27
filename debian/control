@@ -42,7 +42,7 @@ Suggests:
  freepats,
  pmidi,
  timidity-daemon (>= 2.14.0-1),
-Breaks: timidity-daemon (>= 2.14.0-1~),
+Breaks: timidity-daemon (<< 2.14.0-1~),
 Description: Software sound renderer (MIDI sequencer, MOD player)
  TiMidity++ is a very high quality software-only MIDI sequencer and MOD player.
  It uses sound fonts (GUS-compatible or SF2-compatible) to render MIDI files,

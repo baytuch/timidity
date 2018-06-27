@@ -1,3 +1,12 @@
+timidity (2.14.0-7) unstable; urgency=high
+
+  * Bug fix: "Breaks: timidity-daemon (<= 2.14.0-1~) but 2.14.0-5 is to
+    be installed", thanks to Sven Joachim (Closes: #902448).
+    Replace by Breaks: timidity-daemon (>= 2.14.0-1~) by
+    Breaks: timidity-daemon (<< 2.14.0-1~)
+
+ -- Bastien Roucariès <rouca@debian.org>  Wed, 27 Jun 2018 22:02:17 +0200
+
 timidity (2.14.0-6) unstable; urgency=medium
 
   * Adopt package (Closes: #886347).
