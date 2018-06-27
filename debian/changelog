@@ -1,3 +1,9 @@
+timidity (2.14.0-8) unstable; urgency=medium
+
+  * Fix FTBFS due to test requiring /etc/timidity/timidity.cfg
+
+ -- Bastien Roucariès <rouca@debian.org>  Wed, 27 Jun 2018 22:06:49 +0200
+
 timidity (2.14.0-7) unstable; urgency=high
 
   * Bug fix: "Breaks: timidity-daemon (<= 2.14.0-1~) but 2.14.0-5 is to
